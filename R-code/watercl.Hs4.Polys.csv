@@ -1,0 +1,41 @@
+"ID","Polyhedron Name","Frequency","Tot. %","Rel. %","Persistence (# snaps)"
+"1","Tetrahedron",1029,0.0309,32.98,4.952
+"0","Square",833,0.025,26.7,3.505
+"2","Square Pyramid",2177,0.0654,28.46,2.555
+"4","Wedge",1575,0.0473,20.59,2.48
+"3","Triangular Bipyramid",1286,0.0386,16.81,2.346
+"5","Capped Square Pyramid",1544,0.0464,13.09,2.25
+"7","Flap Octahedron",1325,0.0398,11.24,2.448
+"8","Octahedron",712,0.0214,6.04,2.308
+"10","Side-Deleted Pentagonal Pyramid",477,0.0143,4.04,2.177
+"33","Trigonal Prism",328,0.0098,2.78,2.576
+"9","Pentagonal Pyramid",117,0.0035,0.99,2.225
+"6","Doubly Crossed Trigonal Prism",35,0.0011,0.3,2.109
+"34","Cut Snub Disphenoid",1709,0.0513,24.55,1.973
+"11","Augmented Trigonal Prism",1485,0.0446,21.33,1.832
+"38","Double Side Deleted Pentagonal Bipyramid V3",662,0.0199,9.51,2.284
+"37","Double Side Deleted Pentagonal Bipyramid V2",588,0.0177,8.45,1.846
+"41","Pentagonal Bipyramid",457,0.0137,6.57,2.02
+"14","Cap Octahedron",284,0.0085,4.08,1.857
+"12","Cap Flap Octahedron V1",229,0.0069,3.29,2.015
+"39","Elongated Triangular Pyramid",120,0.0036,1.72,2.011
+"45","Side-Deleted Hexagonal Pyramid",106,0.0032,1.52,1.954
+"15","Capped Pentagonal Pyramid",75,0.0023,1.08,1.833
+"35","Double Side Deleted Pentagonal Bipyramid V1",74,0.0022,1.06,1
+"16","Cut Cube",13,4e-04,0.19,2.209
+"40","Hexagonal Pyramid",4,1e-04,0.06,1.667
+"13","Cap Flap Octahedron V2",1,0,0.01,2.288
+"17","Bi-augmented Trigonal Prism",276,0.0083,21.61,1.797
+"48","Snub Disphenoid",163,0.0049,12.76,1.917
+"20","Cube",80,0.0024,6.26,1.803
+"22","Gyrobifastigium",58,0.0017,4.54,1.591
+"18","Capped Augmented Trigonal Prism",45,0.0014,3.52,1.5
+"19","Capped Pentagonal Bipyramid",30,9e-04,2.35,1.877
+"43","Side-deleted Hexagonal Bipyramid",31,9e-04,2.43,1.929
+"36","Open Edged Cube",25,8e-04,1.96,1.393
+"21","Elongated Triangular Bipyramid",23,7e-04,1.8,1.939
+"50","Square Antiprism",23,7e-04,1.8,1.619
+"24","Monocapped Square Antiprism",19,6e-04,34.55,2.167
+"23","Monocapped Cube",6,2e-04,10.91,3
+"25","Tri-augmented Trigonal Prism",5,2e-04,9.09,2.133
+"26","Tridiminished Icosahedron",5,2e-04,9.09,1.8

@@ -1,0 +1,12 @@
+
+here is the test of running ChemNetworks for TBP in water/hexane mixture
+  treat water as solvent1, hexane as solvent2, TBP as solute
+
+  here water:water hydrogen bonds are based on O..H distance < 2.5 and OH..O angle > 145
+  hexane:hexane interaction are based on C..C distance < 5.0
+  water:hexane interaction are based on O..C distance < 5.40
+  water:TBP interaction are based on O..P, O..O=P, O..O-P distances
+  hexane:TBP interaction are based on C..O-P distance
+
+
+

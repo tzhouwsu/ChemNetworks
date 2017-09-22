@@ -1,0 +1,8 @@
+
+here are some test-jobs for ChemNetworks package
+
+  ./test1/  :  pure water
+  ./test2/  :  1 methane in water, treat methane as solute, water as solvent
+  ./test3/  :  27 NaOH in water, treat water as solvent1, OH as solvent2, Na as solute
+  ./test3/  :  TBP in water/hexane mixture, treat water as solvent1, hexane as solvent2, TBP as solute
+

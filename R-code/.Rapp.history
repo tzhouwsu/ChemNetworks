@@ -1,0 +1,245 @@
+thisarray[1]
+thisarray[1234]
+thisarray[12]
+1:3
+4:3
+3234:33
+33:11
+33:11:2
+33:11
+boolvec1 <- c(TRUE TRUE FALSE FALSE)
+boolvec1 <- c(TRUE,TRUE,FALSE,FALSE)
+boolvec2 <- c(TRUE,FALSE,TRUE,FALSE)
+boolvec1 & boolvec2
+boolvec1 && boolvec2
+boolvec2 <- c(FALSE,FALSE,FALSE,FALSE)
+boolvec1 && boolvec2
+boolvec2 <- c(TRUE,FALSE,TRUE,FALSE)
+if (boolvec1 & boolvec2)
+printf("hi")
+printf
+if(boolvec1 & boolvec2)
+x=x+1
+x
+x+1
+x=x+1
+x
+xx
+L = list(one=1, two=c(1,2), five=seq(0, 1, length=5))
+L[five]
+L["five"]
+L$five
+L
+3==4
+3==3
+3==x[1]
+y
+y=x+3
+y=y/2
+ls
+ls()
+ls
+ls()
+x
+y
+x==y
+x===y
+x==y
+mtx1 = matrix(1:15, nrow=3, ncol=5)mtx2 = matrix(1:15, nrow=3, ncol=5, byrow=TRUE)
+mtx1 == mtx2
+mtx1
+mtx 23
+mtx2
+mtx1+mtx2
+boolvec1 + boolvec2
+boolvec1 - boolvec2
+char1 = "hello"
+char2 = "yellow"
+char1 == char2
+char1 + char2
+boolvec1 * boolvec2
+boolvec1 / boolvec2
+mtx1 * mtx2
+vec1
+vec1 = c(1,2,3,4)
+boolvec1 * vec1
+boolvec1
+-boolvec1
+vec1
+-vec1
++vec1
+vec1 * c(-1,1,-1,1)
+-vec1
+mtx1 = matrix(1:15, nrow=3, ncol=5)mtx2 = matrix(-7:8, nrow=3, ncol=5, byrow=TRUE)
+mtx1 = matrix(1:15, nrow=3, ncol=5)mtx2 = matrix(-7:7, nrow=3, ncol=5, byrow=TRUE)
+mtx1 == mtx2
+mtx1 = matrix(15:1, nrow=3, ncol=5)mtx2 = matrix(-7:7, nrow=3, ncol=5, byrow=TRUE)
+mtx1 == mtx2
+mtx1 = matrix(1:15, nrow=3, ncol=5)mtx2 = matrix(-3:11, nrow=3, ncol=5, byrow=TRUE)
+mtx1 == mtx2
+mtx1/vec1
+vec1=c(1,2,3)
+mtx1/vec1
+vec1=c(1,-2,3)
++vec1
+-vec1
+mtx1^vec1
+vec1
+5 %% 3
+vec1[vec1>0]
+vec1
+vec1 <- 5
+vec1
+vec1 <- c(1,-2,3)
+fill(vec1,5)
+fill
+?fill
+?help
+?igraph
+??igraph
+help(igraph)
+?purple
+??purple
+??find
+?fined
+?find
+??help
+?+
+?-
+?(+)
+?"+"
+c(33,"hllo",5.3)
+v<-c(33,"hllo",5.3)
+v
+as.vector(v)
+as.numeric(v)
+v[1]
+v[[1]]
+v[[asdf]]
+sin(33)
+arcsin(33)
+sin-1(33)
+sin-1(.2)
+asin(33)
+mtx2
+log10(mtx2)
+log10(mtx2[mtx2>0])
+?if
+?"if"
+?variable
+??variable
+pi
+asin(vec3)
+vec3 <- c(4,3,2,1)
+vec3
+asin(vec3)
+sin(pi/2)
+?
+?+
+as.numeric(boolvec1)
+for (i in 1:10)
+cat("Hi")
+for (i in 1:10)
+{}
+for (i in 1:10)
+{
+cat ("Hi", i)
+}
+"Hi"
+mylist <- c(1, “hello”, 2.5, c(1,2,3))
+mylist <- c(1, “hello”, 2.5)
+mylist <- c(1, hello', 2.5)
+mylist <- c(1, 'hello', 2.5)
+mylist <- c(1, 'hello', 2.5, c(1,2,3))
+mylist
+append(mylist,c(1,3))
+mylist <- c(1, 'hello', 2.5, as.list(c(1,2,3)))
+mylist
+mylist <- c(1, 'hello', 2.5, as.vector(c(1,2,3)))
+mylist
+mylist <- c(1, 'hello', 2.5, vector(c(1,2,3)))
+vector(mode="numeric", length=3)
+vector(length=3)
+?sum
+vec1
+vec1==vec2
+vec2
+vec2 <- c(3,2,-1)
+vec1 <- c(1,2,3)
+vec1 == vec2
+all(vec1==vec2)
+any(vec1==vec2)
+cbind(vec1, vec2)
+vec1
+vec2
+rbind(vec1,vec2)
+?seq
+vec1 & vec2
+vec1
+vec2
+vec1 > vec2
+boolvec1 & boolvec2
+boolvec1 && boolvec2
+is.nan(x)
+is.nan(asin(x))
+is.nan(asin(x/5))
+is.inf
+1/0
+1/0 == inf
+1/0 == Inf
+?dim
+ls()
+mtx1
+dim(mtx1)
+mylist
+as.numeric(mylist)
+mynums <- as.numeric(mylist)
+mynums
+max(mynums)
+max(mynums, na.rm=TRUE)
+length(mtx1)
+length(mylist)
+mylist
+list
+ls()
+mylist <- list(mylist)
+mylist
+mylist <-list(mylist, 35)
+mylist
+mylist <- list(x, char1, y)
+mylist
+mynums <- as.numeric(mylist)
+mylist <- list(3, char1, y)
+mylist
+mylist <-as.vector(mylist)
+mylist
+mylist <- as.numeric(mylist)
+x<-2.3y<-42vec1 <- c(1,2,3)vec2 <- c(3,2,-1)vec3 <- c(4,3,2,1)mtx1 <- matrix(1:15, nrow=3, ncol=5)mtx2 <- matrix(-3:11, nrow=3, ncol=5, byrow=TRUE)boolvec1 <- c(TRUE, TRUE, TRUE, TRUE)boolvec2 <- c(TRUE, FALSE, TRUE, FALSE)char1 <- “hello”char2 <- “yellow”chvector <- c(x, char1, y)mynums <- as.numeric(chvector)		# This makes it act like a number.
+char1
+char2
+chvector
+mynums
+y %% 4
+y
+y $$ 5
+y %% 5
+vec3 <- c(45,33,27,13)
+genders <- c(“male”, “female”, “female”, “male”)
+genders
+genders <- c('male', 'female', 'female', 'male')
+genders
+genderf <- as.factor(genders)
+genderf
+levels(genderf)
+vec1
+length(vec1)<-4
+vec1
+length(vec1)<-3
+vec1
+setwd("Desktop")
+setwd("ChemNetworks 2.0")
+setwd("R Code")
+source()
+souce("Polyhedra.R")
+source("Polyhedra.R")
+makePolyFreqs("watercl.Hs4.Polys")

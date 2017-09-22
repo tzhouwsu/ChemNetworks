@@ -1,0 +1,7 @@
+
+here is the test of running ChemNetworks for one methane in water
+  treat methane as solute1, water as solvent1
+
+  here, water:water hydrogen bonds are defined based on O..O distance < 3.5, and HO..O angle < 30
+
+

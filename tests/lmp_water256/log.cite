@@ -1,0 +1,14 @@
+This LAMMPS simulation made specific use of work described in the
+following references.  See http://lammps.sandia.gov/cite.html
+for details.
+
+fix chemnetwork command:
+
+@Article{chemnetwork,
+ author =  {authors},
+ title =   {title},
+ journal = {journal},
+ year =    year,
+ note =    {doi: }
+}
+

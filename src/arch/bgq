@@ -1,0 +1,5 @@
+CXX = mpixlcxx_r
+CXXFLAGS = -g -O3 -qarch=qp -qtune=qp -qsimd=auto -qprefetch -qunroll=yes -qstrict
+LIBS = -L${IBM_MAIN_DIR}/xlmass/bg/7.3/bglib64 -lmassv -lmass
+LINKFLAGS = -g $(CXXFLAGS)
+

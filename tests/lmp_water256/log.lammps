@@ -1,0 +1,146 @@
+LAMMPS (6 Jul 2017)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
+  using 1 OpenMP thread(s) per MPI task
+units           real
+atom_style      full
+
+pair_style      lj/cut/coul/long 9.0
+pair_modify     mix arithmetic
+
+bond_style      hybrid harmonic morse
+angle_style     harmonic
+dihedral_style  none
+improper_style  none
+
+kspace_style    pppm 1e-4
+
+read_data       lmp.data
+  orthogonal box = (0 0 0) to (15.733 15.733 15.733)
+  2 by 2 by 2 MPI processor grid
+  reading atoms ...
+  384 atoms
+  reading velocities ...
+  384 velocities
+  scanning bonds ...
+  2 = max bonds/atom
+  scanning angles ...
+  1 = max angles/atom
+  reading bonds ...
+  256 bonds
+  reading angles ...
+  128 angles
+  2 = max # of 1-2 neighbors
+  1 = max # of 1-3 neighbors
+  1 = max # of 1-4 neighbors
+  2 = max # of special neighbors
+
+bond_coeff      1  harmonic 529.581    1.012     # OW-HW
+
+angle_coeff     1  37.95  113.24                 # HW-OW-HW
+
+pair_coeff      * *  0.0 0.0
+pair_coeff      1 1  0.1554253    3.165492   9.0
+
+neighbor        2.0 bin
+
+timestep        1.0
+
+thermo          1
+thermo_style    custom step temp ebond eangle evdwl ecoul elong pe etotal
+
+#fix             1 all nve
+#fix             2 all temp/berendsen 300.0 300.0 100.0
+fix             1 all npt temp 300.0 300.0 500.0 iso 1.0 1.0 1000.0 fixedpoint 0.0 0.0 0.0
+
+fix             2 all chemnetwork cn.inp 10 O H
+
+dump            1 all custom 1 lmp.lammpstrj id type mol x y z fx fy fz
+dump            2 all xyz    1 lmp.xyz
+dump_modify     2 element O H
+
+#velocity        all create 300.0 4928459 rot yes dist gaussian
+#velocity        all zero linear
+
+run             10
+PPPM initialization ...
+WARNING: Using 12-bit tables for long-range coulomb (../kspace.cpp:321)
+  G vector (1/distance) = 0.302553
+  grid = 10 10 10
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.0199096
+  estimated relative force accuracy = 5.99571e-05
+  using double precision FFTs
+  3d grid and FFT values/proc = 1728 200
+Neighbor list info ...
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11
+  ghost atom cutoff = 11
+  binsize = 5.5, bins = 3 3 3
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut/coul/long, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/3d/newton
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 9.123 | 9.157 | 9.373 Mbytes
+Step Temp E_bond E_angle E_vdwl E_coul E_long PotEng TotEng 
+       0    306.54366    74.043262    97.123774    274.49972    5622.9633   -7310.2964   -1241.6663   -891.70067 
+       1    305.17865    77.626266    97.023531    274.63153    5620.9962   -7310.1853   -1239.9078   -891.50048 
+       2    308.01292    74.804724    96.307008    274.84398    5620.6844   -7310.1013   -1243.4612    -891.8182 
+       3     311.3592    70.119578     95.11502    275.09125    5622.0504   -7309.9326   -1247.5564   -892.09309 
+       4    311.47678    68.848374    93.762585    275.34514    5624.1277   -7309.6324   -1247.5486   -891.95101 
+       5    310.02521    69.689934    92.556584    275.58036    5625.8483    -7309.238   -1245.5628   -891.62243 
+       6    310.77489    68.573319    91.682308    275.78852     5626.313   -7308.8297   -1246.4725   -891.67626 
+       7    313.22887    66.468468    91.201556    275.96595    5625.2143   -7308.4744   -1249.6241   -892.02631 
+       8    313.47039    68.030811    91.113562     276.1204     5622.911   -7308.1976   -1250.0219   -892.14834 
+       9    310.59931    73.432001    91.374645    276.24134    5620.5185   -7307.9919   -1246.4255   -891.82967 
+      10    308.26207    76.968617    91.859753    276.31119    5619.1427    -7307.847   -1243.5647   -891.63728 
+Loop time of 0.144819 on 8 procs for 10 steps with 384 atoms
+
+Performance: 5.966 ns/day, 4.023 hours/ns, 69.052 timesteps/s
+81.0% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.003983   | 0.0046886  | 0.0058272  |   0.8 |  3.24
+Bond    | 4.5697e-05 | 4.9121e-05 | 5.6819e-05 |   0.0 |  0.03
+Kspace  | 0.0020021  | 0.003085   | 0.0038035  |   0.9 |  2.13
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.0012879  | 0.0017547  | 0.0019032  |   0.4 |  1.21
+Output  | 0.0047663  | 0.11782    | 0.13399    |  12.4 | 81.36
+Modify  | 0.00095931 | 0.017288   | 0.13017    |  32.4 | 11.94
+Other   |            | 0.0001296  |            |       |  0.09
+
+Nlocal:    48 ave 59 max 39 min
+Histogram: 1 1 0 1 1 1 2 0 0 1
+Nghost:    2546 ave 2575 max 2516 min
+Histogram: 2 0 0 0 1 0 4 0 0 1
+Neighs:    13168.6 ave 16406 max 10972 min
+Histogram: 1 1 1 2 0 2 0 0 0 1
+
+Total # of neighbors = 105349
+Ave neighs/atom = 274.346
+Ave special neighs/atom = 2
+Neighbor list builds = 0
+Dangerous builds = 0
+write_data      new.data
+PPPM initialization ...
+WARNING: Using 12-bit tables for long-range coulomb (../kspace.cpp:321)
+  G vector (1/distance) = 0.302553
+  grid = 10 10 10
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.0199096
+  estimated relative force accuracy = 5.99573e-05
+  using double precision FFTs
+  3d grid and FFT values/proc = 1728 200
+
+ChemNetwork Timings on Rank 0
+SETUP::   time= 0.000609  count= 1  per_call= 0.000609 
+PACK::    time= 0.000088  count= 2  per_call= 0.000044 
+COMPUTE:: time= 0.259855  count= 2  per_call= 0.129928 
+
+Please see the log.cite file for references relevant to this simulation
+
+Total wall time: 0:00:00

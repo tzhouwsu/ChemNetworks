@@ -1,0 +1,5 @@
+CN_DIR = ../src
+
+CXX = g++ 
+CXXFLAGS = -Wall -I$(CN_DIR) -g
+LIBS = $(CN_DIR)/libChemNetworks-2.2.a -lm

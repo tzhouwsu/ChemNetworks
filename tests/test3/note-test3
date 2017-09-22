@@ -1,0 +1,7 @@
+
+here is the test of running ChemNetworks for 27 NaOH in water
+  treat water as solvent1, OH as solvent2, Na as solute1
+
+  here water:water hydrogen bonds are defined as O..H < 2.5 and HO..O < 30
+  and OH:OH hydrogen bonds are defined as O..H < 2.5 and HO..O < 30
+
