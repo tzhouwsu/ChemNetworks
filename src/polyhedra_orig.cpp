@@ -781,7 +781,7 @@ double * ChemNetworkOrig::pagerank(int ** adjM, int nodes, double damp, double t
         diff=0.00;
         for(i=0;i<nodes;i++)
         {
-            diff+=fabsf(a[i]-b[i]); // absolute value of difference
+            diff+=fabs(a[i]-b[i]); // absolute value of difference
         }
         for(i=0;i<nodes;i++) // copy the new pagerank information into pgrk[]
         {
@@ -827,7 +827,7 @@ void ChemNetworkOrig::makeallpolys(poly **polylist)
 {
     
     int sqedgelist[8]={0,1,1,2,2,3,3,0};
-    polylist[0]=poly_create("Square", sqedgelist, 4, 4);
+    polylist[0]=poly_create((char *)"Square", sqedgelist, 4, 4);
     
     //output adjacency matrix
     /*
@@ -844,158 +844,158 @@ void ChemNetworkOrig::makeallpolys(poly **polylist)
      */
     
     int tetedgelist[12] = {0,1, 1,2, 2,0, 0,3, 1,3, 2,3};
-    polylist[1]=poly_create("Tetrahedron", tetedgelist, 4, 6);
+    polylist[1]=poly_create((char *)"Tetrahedron", tetedgelist, 4, 6);
     
     int sqpyEL[16] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 2,4, 3,4};
-    polylist[2]=poly_create("Square Pyramid",sqpyEL, 5, 8);
+    polylist[2]=poly_create((char *)"Square Pyramid",sqpyEL, 5, 8);
     
     int tbpEL[18] = {0,1, 1,2, 2,3, 3,0, 3,1, 3,4, 0,4, 1,4, 2,4};
-    polylist[3]=poly_create("Triangular Bipyramid",tbpEL,5,9);
+    polylist[3]=poly_create((char *)"Triangular Bipyramid",tbpEL,5,9);
     
     int wedgeEL[14] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 3,4};
-    polylist[4]=poly_create("Wedge",wedgeEL,5,7);
+    polylist[4]=poly_create((char *)"Wedge",wedgeEL,5,7);
     
     int octEL[24] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 2,4, 3,4, 0,5, 1,5, 2,5, 3,5};
-    polylist[5]=poly_create("Octahedron", octEL, 6, 12);
+    polylist[5]=poly_create((char *)"Octahedron", octEL, 6, 12);
     
     int tprismEL[18] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 1,3, 2,4, 0,5};
-    polylist[6] = poly_create("Trigonal Prism",tprismEL, 6, 9);
+    polylist[6] = poly_create((char *)"Trigonal Prism",tprismEL, 6, 9);
     
     int pentpyEL[20] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5};
-    polylist[7] = poly_create("Pentagonal Pyramid", pentpyEL, 6,10);
+    polylist[7] = poly_create((char *)"Pentagonal Pyramid", pentpyEL, 6,10);
     
     int csqpyEL[22] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 2,4, 3,4, 0,5, 1,5, 4,5};
-    polylist[8] = poly_create("Capped Square Pyramid", csqpyEL, 6, 11);
+    polylist[8] = poly_create((char *)"Capped Square Pyramid", csqpyEL, 6, 11);
     
     int sdppEL[16] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5};
-    polylist[9] = poly_create("Side-Deleted Pentagonal Pyramid", sdppEL, 6, 8);
+    polylist[9] = poly_create((char *)"Side-Deleted Pentagonal Pyramid", sdppEL, 6, 8);
     
     int flapoctEL[20] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 2,4, 3,4, 1,5, 2,5};
-    polylist[10] = poly_create("Flap Octahedron", flapoctEL, 6, 10);
+    polylist[10] = poly_create((char *)"Flap Octahedron", flapoctEL, 6, 10);
     
     int eltripEL[24] = {0,1, 1,2, 2,0, 0,3, 1,3, 2,3, 4,0, 5,1, 6,2, 4,5, 5,6, 6,4};
-    polylist[11] = poly_create("Elongated Triangular Pyramid", eltripEL, 7, 12);
+    polylist[11] = poly_create((char *)"Elongated Triangular Pyramid", eltripEL, 7, 12);
     
     int pentbpEL[30] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 2,6, 3,6, 4,6};
-    polylist[12] = poly_create("Pentagonal Bipyramid", pentbpEL, 7, 15);
+    polylist[12] = poly_create((char *)"Pentagonal Bipyramid", pentbpEL, 7, 15);
     
     int augtripEL[26] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 1,3, 2,4, 0,5, 0,6, 1,6, 3,6, 5,6};
-    polylist[13] = poly_create("Augmented Trigonal Prism", augtripEL, 7, 13);
+    polylist[13] = poly_create((char *)"Augmented Trigonal Prism", augtripEL, 7, 13);
     
     int capoctEL[30] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,4, 2,4, 3,4, 0,5, 1,5, 4,5, 0,6, 1,6, 2,6, 3,6};
-    polylist[14] = poly_create("Cap Octahedron", capoctEL, 7, 15);
+    polylist[14] = poly_create((char *)"Cap Octahedron", capoctEL, 7, 15);
     
     int ccubeEL[18] = {0,1, 1,2, 2,3, 3,0, 0,4, 3,6, 2,5, 4,6, 5,6};
-    polylist[15] = poly_create("Cut Cube", ccubeEL, 7, 9);
+    polylist[15] = poly_create((char *)"Cut Cube", ccubeEL, 7, 9);
     
     int csdisphEL[26] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 2,6};
-    polylist[16] = poly_create("Cut Snub Disphenoid", csdisphEL, 7, 13);
+    polylist[16] = poly_create((char *)"Cut Snub Disphenoid", csdisphEL, 7, 13);
     
     int cubeEL[24] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,5, 2,6, 3,7, 4,5, 5,6, 6,7, 7,4};
-    polylist[17] = poly_create("Cube", cubeEL, 8, 12);
+    polylist[17] = poly_create((char *)"Cube", cubeEL, 8, 12);
     
     int sqantiEL[32] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,7, 0,4, 1,4, 1,5, 2,5, 2,6, 3,6, 3,7};
-    polylist[18] = poly_create("Square Antiprism", sqantiEL, 8, 16);
+    polylist[18] = poly_create((char *)"Square Antiprism", sqantiEL, 8, 16);
     
     int batpEL[34] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 0,3, 1,4, 2,5, 0,6, 1,6, 3,6, 4,6, 1,7, 2,7, 4,7, 5,7};
-    polylist[19] = poly_create("Bi-augmented Trigonal Prism", batpEL, 8, 17);
+    polylist[19] = poly_create((char *)"Bi-augmented Trigonal Prism", batpEL, 8, 17);
     
     int sndisphEL[36] = {0,1, 1,2, 2,3, 3,4, 4,0, 3,5, 5,0, 4,5, 0,6, 1,6, 2,6, 3,6, 4,6, 0,7, 1,7, 2,7, 3,7, 5,7};
-    polylist[20] = poly_create("Snub Disphenoid", sndisphEL, 8, 18);
+    polylist[20] = poly_create((char *)"Snub Disphenoid", sndisphEL, 8, 18);
     
     int gyrobiEL[28] = {0,1, 1,2, 2,0, 2,3, 3,4, 4,0, 1,6, 2,7, 3,7, 4,5, 0,5, 5,6, 6,7, 7,5};
-    polylist[21] = poly_create("Gyrobifastigium", gyrobiEL, 8, 14);
+    polylist[21] = poly_create((char *)"Gyrobifastigium", gyrobiEL, 8, 14);
     
     int eltribpEL[30] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 0,3, 1,4, 2,5, 0,6, 1,6, 2,6, 3,7, 4,7, 5,7};
-    polylist[22] = poly_create("Elongated Triangular Bipyramid", eltribpEL, 8, 15);
+    polylist[22] = poly_create((char *)"Elongated Triangular Bipyramid", eltribpEL, 8, 15);
     
     int triatpEL[42] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 0,3, 1,4, 2,5, 0,6, 1,6, 3,6, 4,6, 1,7, 2,7, 4,7, 5,7, 0,8, 2,8, 3,8, 5,8};
-    polylist[23] = poly_create("Tri-augmented Trigonal Prism", triatpEL, 9, 21);
+    polylist[23] = poly_create((char *)"Tri-augmented Trigonal Prism", triatpEL, 9, 21);
     
     int mccubeEL[32] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,5, 2,6, 3,7, 4,5, 5,6, 6,7, 7,4, 0,8, 1,8, 2,8, 3,8};
-    polylist[24] = poly_create("Monocapped Cube", mccubeEL, 9, 16);
+    polylist[24] = poly_create((char *)"Monocapped Cube", mccubeEL, 9, 16);
     
     int mcsqantiEL[40] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,7, 0,4, 1,4, 1,5, 2,5, 2,6, 3,6, 3,7, 0,8, 1,8, 2,8, 3,8};
-    polylist[25] = poly_create("Monocapped Square Antiprism", mcsqantiEL, 9, 20);
+    polylist[25] = poly_create((char *)"Monocapped Square Antiprism", mcsqantiEL, 9, 20);
     
     int tdimicosEL[30] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 1,3, 3,5, 5,1, 0,6, 2,7, 4,8, 6,7, 7,8, 8,6};
-    polylist[26] = poly_create("Tridiminished Icosahedron", tdimicosEL, 9, 15);
+    polylist[26] = poly_create((char *)"Tridiminished Icosahedron", tdimicosEL, 9, 15);
     
     int bcsqantiEL[48] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,7, 0,4, 1,4, 1,5, 2,5, 2,6, 3,6, 3,7, 0,8, 1,8, 2,8, 3,8, 4,9, 5,9, 6,9, 7,9};
-    polylist[27] = poly_create("Bicapped Square Antiprism", bcsqantiEL, 10, 24);
+    polylist[27] = poly_create((char *)"Bicapped Square Antiprism", bcsqantiEL, 10, 24);
     
     int bccube1EL[40] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,5, 2,6, 3,7, 4,5, 5,6, 6,7, 7,4, 0,8, 1,8, 2,8, 3,8, 4,9, 5,9, 6,9, 7,9};
-    polylist[28] = poly_create("Bicapped Cube 1", bccube1EL, 10, 20);
+    polylist[28] = poly_create((char *)"Bicapped Cube 1", bccube1EL, 10, 20);
     //caps are opposite to each other
     
     int bccube2EL[40] = {0,1, 1,2, 2,3, 3,0, 0,4, 1,5, 2,6, 3,7, 4,5, 5,6, 6,7, 7,4, 0,8, 1,8, 2,8, 3,8, 0,9, 1,9, 5,9, 4,9};
-    polylist[29] = poly_create("Bicapped Cube 2", bccube2EL, 10, 20);
+    polylist[29] = poly_create((char *)"Bicapped Cube 2", bccube2EL, 10, 20);
     //caps are next to each other
     
     int bidimicosEL[40] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 1,3, 3,5, 5,1, 0,6, 2,7, 4,8, 6,7, 7,8, 8,6, 0,9, 1,9, 2,9, 6,9, 7,9};
-    polylist[30] = poly_create("Bidiminished Icosahedron", bidimicosEL, 10, 20);
+    polylist[30] = poly_create((char *)"Bidiminished Icosahedron", bidimicosEL, 10, 20);
     
     int tetatp1EL[48] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 0,3, 1,4, 2,5, 0,6, 1,6, 3,6, 4,6, 1,7, 2,7, 4,7, 5,7, 0,8, 2,8, 3,8, 5,8, 0,9, 1,9, 2,9};
-    polylist[31] = poly_create("Tetra-augmented Trigonal Prism", tetatp1EL, 10, 24);
+    polylist[31] = poly_create((char *)"Tetra-augmented Trigonal Prism", tetatp1EL, 10, 24);
     
     int sphenoEL[44] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 1,6, 2,6, 2,8, 3,8, 3,9, 4,9, 4,7, 0,7, 6,8, 7,9, 6,7, 8,9};
-    polylist[32] = poly_create("Sphenocorona", sphenoEL, 10, 22);
+    polylist[32] = poly_create((char *)"Sphenocorona", sphenoEL, 10, 22);
     
     int dctprEL[12] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3};
-    polylist[33] = poly_create("Doubly Crossed Trigonal Prism", dctprEL, 6, 6);
+    polylist[33] = poly_create((char *)"Doubly Crossed Trigonal Prism", dctprEL, 6, 6);
     
     //polyhedra created following testing:
     
     int cfloc1edgelist[26] = {0,1, 0,2, 0,3, 0,4, 0,5, 1,2, 1,4, 1,6, 2,3, 2,6, 3,4, 3,5, 4,5};
-	polylist[34] = poly_create("Cap Flap Octahedron V1", cfloc1edgelist, 7, 13);
+	polylist[34] = poly_create((char *)"Cap Flap Octahedron V1", cfloc1edgelist, 7, 13);
     
     int cfloc2edgelist[26] = {0,1, 0,2, 0,3, 0,4, 0,5, 1,2, 1,4, 1,6, 2,3, 2,6, 3,4, 2,5, 4,5};
-	polylist[35] = poly_create("Cap Flap Octahedron V2", cfloc2edgelist, 7, 13);
+	polylist[35] = poly_create((char *)"Cap Flap Octahedron V2", cfloc2edgelist, 7, 13);
     
 	int cpentbipyel[36] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 2,6, 3,6, 4,6, 0,7, 1,7, 5,7};
-    polylist[36]=poly_create("Capped Pentagonal Bipyramid", cpentbipyel, 8, 18);
+    polylist[36]=poly_create((char *)"Capped Pentagonal Bipyramid", cpentbipyel, 8, 18);
     
     int bisdpentbipy1el[22] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 0,6, 1,6, 2,6};
-    polylist[37] = poly_create("Double Side Deleted Pentagonal Bipyramid V1", bisdpentbipy1el, 7, 11);
+    polylist[37] = poly_create((char *)"Double Side Deleted Pentagonal Bipyramid V1", bisdpentbipy1el, 7, 11);
     
     int bisdpentbipy2el[22] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 1,6, 2,6, 3,6};
-    polylist[38] = poly_create("Double Side Deleted Pentagonal Bipyramid V2", bisdpentbipy2el, 7, 11);
+    polylist[38] = poly_create((char *)"Double Side Deleted Pentagonal Bipyramid V2", bisdpentbipy2el, 7, 11);
     
     int bisdpentbipy3el[22] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 2,6, 3,6, 4,6};
-    polylist[39] = poly_create("Double Side Deleted Pentagonal Bipyramid V3", bisdpentbipy3el, 7, 11);
+    polylist[39] = poly_create((char *)"Double Side Deleted Pentagonal Bipyramid V3", bisdpentbipy3el, 7, 11);
     
     int hexpyel[24] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 0,6, 1,6, 2,6, 3,6, 4,6, 5,6};
-    polylist[40] = poly_create("Hexagonal Pyramid", hexpyel, 7, 12);
+    polylist[40] = poly_create((char *)"Hexagonal Pyramid", hexpyel, 7, 12);
     
     int sidedelhexpy[20] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 0,6, 1,6, 2,6, 3,6};
-    polylist[41] = poly_create("Side-Deleted Hexagonal Pyramid",sidedelhexpy, 7, 10);
+    polylist[41] = poly_create((char *)"Side-Deleted Hexagonal Pyramid",sidedelhexpy, 7, 10);
     
     int hexbipyel[36] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 0,6, 1,6, 2,6, 3,6, 4,6, 5,6, 0,7, 1,7, 2,7, 3,7, 4,7, 5,7};
-    polylist[42] = poly_create("Hexagonal Bipyramid", hexbipyel, 8, 18);
+    polylist[42] = poly_create((char *)"Hexagonal Bipyramid", hexbipyel, 8, 18);
     
     int sdhexbipyel[32] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 0,6, 1,6, 2,6, 3,6, 4,6, 5,6, 0,7, 1,7, 2,7, 3,7};
-    polylist[43] = poly_create("Side-deleted Hexagonal Bipyramid", sdhexbipyel, 8, 16);
+    polylist[43] = poly_create((char *)"Side-deleted Hexagonal Bipyramid", sdhexbipyel, 8, 16);
     
     int caphexbipyel[42] = {0,1, 1,2, 2,3, 3,4, 4,5, 5,0, 0,6, 1,6, 2,6, 3,6, 4,6, 5,6, 0,7, 1,7, 2,7, 3,7, 4,7, 5,7, 0,8, 1,8, 6,8};
-    polylist[44] = poly_create("Capped Hexagonal Bipyramid", caphexbipyel, 9, 19);
+    polylist[44] = poly_create((char *)"Capped Hexagonal Bipyramid", caphexbipyel, 9, 19);
     
     int cpentpyel[26] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 5,6};
-    polylist[45] = poly_create("Capped Pentagonal Pyramid", cpentpyel, 7, 13);
+    polylist[45] = poly_create((char *)"Capped Pentagonal Pyramid", cpentpyel, 7, 13);
     
     int bicpentpy1el[32] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 5,6, 1,7, 2,7, 5,7};
-    polylist[46] = poly_create("Bicapped Pentagonal Pyramid V1", bicpentpy1el, 8, 16);
+    polylist[46] = poly_create((char *)"Bicapped Pentagonal Pyramid V1", bicpentpy1el, 8, 16);
     
     int bicpentpy2el[32] = {0,1, 1,2, 2,3, 3,4, 4,0, 0,5, 1,5, 2,5, 3,5, 4,5, 0,6, 1,6, 5,6, 2,7, 3,7, 5,7};
-    polylist[47] = poly_create("Bicapped Pentagonal Pyramid V2", bicpentpy2el, 8, 16);
+    polylist[47] = poly_create((char *)"Bicapped Pentagonal Pyramid V2", bicpentpy2el, 8, 16);
     
     int openedgecubeel[22] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6};
-    polylist[48] = poly_create("Open Edged Cube", openedgecubeel, 8, 11);
+    polylist[48] = poly_create((char *)"Open Edged Cube", openedgecubeel, 8, 11);
     
     int rhombicprismel[28] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7, 0,2, 4,6};
-    polylist[49] = poly_create("Rhombic Prism", rhombicprismel, 8, 14);
+    polylist[49] = poly_create((char *)"Rhombic Prism", rhombicprismel, 8, 14);
     
     int capatpel[32] = {0,1, 1,2, 2,0, 3,4, 4,5, 5,3, 0,3, 1,4, 2,5, 0,6, 1,6, 2,6, 0,7, 3,7, 1,7, 4,7};
-    polylist[50] = poly_create("Capped Augmented Trigonal Prism", capatpel, 8, 16);
+    polylist[50] = poly_create((char *)"Capped Augmented Trigonal Prism", capatpel, 8, 16);
     
     
     return;
@@ -1159,7 +1159,7 @@ int ChemNetworkOrig::polymatch(poly **polylist, int **adjacency_matrix, double *
             if(shellsize == polylist[j]->nvtx) //if it has the right number of vertices then keep checking
             {
                 
-                if(fabsf(polylist[j]->char_pr - adj_PR[shellsize]) < tolerance)
+                if(fabs(polylist[j]->char_pr - adj_PR[shellsize]) < tolerance)
                     //if pageranks are within tolerance of each other they match, since algorithm requires a tolerance-based convergence.
                 {
                     
@@ -1243,7 +1243,7 @@ int ChemNetworkOrig::polymatch(poly **polylist, int **adjacency_matrix, double *
                         
                         for(k=0; k<shellsize; k++)
                         {
-                            if(fabsf(adj_PR[k]-polylist[29]->prvect[3]) <tolerance) //find 5-connected water.
+                            if(fabs(adj_PR[k]-polylist[29]->prvect[3]) <tolerance) //find 5-connected water.
                             {
                                 vtx5=k;
                                 break;
@@ -1252,7 +1252,7 @@ int ChemNetworkOrig::polymatch(poly **polylist, int **adjacency_matrix, double *
                         for(k=0; k<shellsize; k++)
                         {
                             //if connnected to 5- and 3-connected (has right pr)
-                            if((fabsf(adj_PR[k]-polylist[29]->prvect[7]) <tolerance) && temp_adjm[k][vtx5]==1)
+                            if((fabs(adj_PR[k]-polylist[29]->prvect[7]) <tolerance) && temp_adjm[k][vtx5]==1)
                             {
                                 if(vtx4[0]!=0)
                                 {
