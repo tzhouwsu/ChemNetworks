@@ -440,26 +440,26 @@ namespace CN_NS {
        int s1s1hbdn, s1s1hban, s2s2hbdn, s2s2hban, s3s3hbdn, s3s3hban;
        int s1s2hbdn, s1s2hban, s1s3hbdn, s1s3hban, s2s3hbdn, s2s3hban;
        char **slvntatm1, **slvntatm2, **slvntatm3, **sltatm1, **sltatm2, **slvntatmtest;
-       int slvntatmnum1[50], slvntatmnum2[50], slvntatmnum3[50], sltatmnum1[50], sltatmnum2[50];
-       int s1a[50], s1b[50], s2a[50], s2b[50], s3a[50], s3b[50], s12a[50], s12b[50], s13a[50], s13b[50], s23a[50], s23b[50];
-       int s1s1v1[50], s1s1v2[50], s1s1v3[50], s1s1v4[50], s1s1v5[50];
-       int s2s2v1[50], s2s2v2[50], s2s2v3[50], s2s2v4[50], s2s2v5[50];
-       int s3s3v1[50], s3s3v2[50], s3s3v3[50], s3s3v4[50], s3s3v5[50];
-       int s1s2v1[50], s1s2v2[50], s1s2v3[50], s1s2v4[50], s1s2v5[50];
-       int s1s3v1[50], s1s3v2[50], s1s3v3[50], s1s3v4[50], s1s3v5[50];
-       int s2s3v1[50], s2s3v2[50], s2s3v3[50], s2s3v4[50], s2s3v5[50];
-//       double s1s1v6[50], s2s2v6[50], s3s3v6[50], s1s2v6[50], s1s3v6[50], s2s3v6[50];    // 2015.12.14 , I want to have both lower boundary and upper boundary for HB angle, Tiecheng
-       double s1s1v6[50], s1s1v7[50], s2s2v6[50], s2s2v7[50], s3s3v6[50], s3s3v7[50], s1s2v6[50], s1s2v7[50], s1s3v6[50], s1s3v7[50], s2s3v6[50], s2s3v7[50];
+       int slvntatmnum1[NUM_INTER], slvntatmnum2[NUM_INTER], slvntatmnum3[NUM_INTER], sltatmnum1[NUM_INTER], sltatmnum2[NUM_INTER];
+       int s1a[NUM_INTER], s1b[NUM_INTER], s2a[NUM_INTER], s2b[NUM_INTER], s3a[NUM_INTER], s3b[NUM_INTER], s12a[NUM_INTER], s12b[NUM_INTER], s13a[NUM_INTER], s13b[NUM_INTER], s23a[NUM_INTER], s23b[NUM_INTER];
+       int s1s1v1[NUM_INTER], s1s1v2[NUM_INTER], s1s1v3[NUM_INTER], s1s1v4[NUM_INTER], s1s1v5[NUM_INTER];
+       int s2s2v1[NUM_INTER], s2s2v2[NUM_INTER], s2s2v3[NUM_INTER], s2s2v4[NUM_INTER], s2s2v5[NUM_INTER];
+       int s3s3v1[NUM_INTER], s3s3v2[NUM_INTER], s3s3v3[NUM_INTER], s3s3v4[NUM_INTER], s3s3v5[NUM_INTER];
+       int s1s2v1[NUM_INTER], s1s2v2[NUM_INTER], s1s2v3[NUM_INTER], s1s2v4[NUM_INTER], s1s2v5[NUM_INTER];
+       int s1s3v1[NUM_INTER], s1s3v2[NUM_INTER], s1s3v3[NUM_INTER], s1s3v4[NUM_INTER], s1s3v5[NUM_INTER];
+       int s2s3v1[NUM_INTER], s2s3v2[NUM_INTER], s2s3v3[NUM_INTER], s2s3v4[NUM_INTER], s2s3v5[NUM_INTER];
+//       double s1s1v6[NUM_INTER], s2s2v6[NUM_INTER], s3s3v6[NUM_INTER], s1s2v6[NUM_INTER], s1s3v6[NUM_INTER], s2s3v6[NUM_INTER];    // 2015.12.14 , I want to have both lower boundary and upper boundary for HB angle, Tiecheng
+       double s1s1v6[NUM_INTER], s1s1v7[NUM_INTER], s2s2v6[NUM_INTER], s2s2v7[NUM_INTER], s3s3v6[NUM_INTER], s3s3v7[NUM_INTER], s1s2v6[NUM_INTER], s1s2v7[NUM_INTER], s1s3v6[NUM_INTER], s1s3v7[NUM_INTER], s2s3v6[NUM_INTER], s2s3v7[NUM_INTER];
 
-//       double s1as1bBD[50], s2as2bBD[50], s3as3bBD[50], s12as12bBD[50], s13as13bBD[50], s23as23bBD[50];  // 2015.12.14 , I want to have both lower boundary and upper boundary for HB distance, Tiecheng
-       double s1as1bBDmin[50], s2as2bBDmin[50], s3as3bBDmin[50], s12as12bBDmin[50], s13as13bBDmin[50], s23as23bBDmin[50];
-       double s1as1bBDmax[50], s2as2bBDmax[50], s3as3bBDmax[50], s12as12bBDmax[50], s13as13bBDmax[50], s23as23bBDmax[50];
+//       double s1as1bBD[NUM_INTER], s2as2bBD[NUM_INTER], s3as3bBD[NUM_INTER], s12as12bBD[NUM_INTER], s13as13bBD[NUM_INTER], s23as23bBD[NUM_INTER];  // 2015.12.14 , I want to have both lower boundary and upper boundary for HB distance, Tiecheng
+       double s1as1bBDmin[NUM_INTER], s2as2bBDmin[NUM_INTER], s3as3bBDmin[NUM_INTER], s12as12bBDmin[NUM_INTER], s13as13bBDmin[NUM_INTER], s23as23bBDmin[NUM_INTER];
+       double s1as1bBDmax[NUM_INTER], s2as2bBDmax[NUM_INTER], s3as3bBDmax[NUM_INTER], s12as12bBDmax[NUM_INTER], s13as13bBDmax[NUM_INTER], s23as23bBDmax[NUM_INTER];
 
        int s1t1cutoffnum, s1t2cutoffnum, s2t1cutoffnum, s2t2cutoffnum, s3t1cutoffnum, s3t2cutoffnum;
-       int s1t1a[50], s1t1b[50], s1t2a[50], s1t2b[50], s2t1a[50], s2t1b[50], s2t2a[50], s2t2b[50], s3t1a[50], s3t1b[50], s3t2a[50], s3t2b[50];
-//       double s1t1cutoff[50], s1t2cutoff[50], s2t1cutoff[50], s2t2cutoff[50], s3t1cutoff[50], s3t2cutoff[50];  // 2015.12.14 ,I want to have both lower boundary and upper boundary for HB distance, Tiecheng
-       double s1t1cutoffmin[50], s1t2cutoffmin[50], s2t1cutoffmin[50], s2t2cutoffmin[50], s3t1cutoffmin[50], s3t2cutoffmin[50];
-       double s1t1cutoffmax[50], s1t2cutoffmax[50], s2t1cutoffmax[50], s2t2cutoffmax[50], s3t1cutoffmax[50], s3t2cutoffmax[50];
+       int s1t1a[NUM_INTER], s1t1b[NUM_INTER], s1t2a[NUM_INTER], s1t2b[NUM_INTER], s2t1a[NUM_INTER], s2t1b[NUM_INTER], s2t2a[NUM_INTER], s2t2b[NUM_INTER], s3t1a[NUM_INTER], s3t1b[NUM_INTER], s3t2a[NUM_INTER], s3t2b[NUM_INTER];
+//       double s1t1cutoff[NUM_INTER], s1t2cutoff[NUM_INTER], s2t1cutoff[NUM_INTER], s2t2cutoff[NUM_INTER], s3t1cutoff[NUM_INTER], s3t2cutoff[NUM_INTER];  // 2015.12.14 ,I want to have both lower boundary and upper boundary for HB distance, Tiecheng
+       double s1t1cutoffmin[NUM_INTER], s1t2cutoffmin[NUM_INTER], s2t1cutoffmin[NUM_INTER], s2t2cutoffmin[NUM_INTER], s3t1cutoffmin[NUM_INTER], s3t2cutoffmin[NUM_INTER];
+       double s1t1cutoffmax[NUM_INTER], s1t2cutoffmax[NUM_INTER], s2t1cutoffmax[NUM_INTER], s2t2cutoffmax[NUM_INTER], s3t1cutoffmax[NUM_INTER], s3t2cutoffmax[NUM_INTER];
 
        double xside, yside, zside;
 

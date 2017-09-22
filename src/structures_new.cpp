@@ -4438,8 +4438,8 @@ int ChemNetworkNew::prismbook_check(double *atmSX, int ndX, int opos, int sXsXhb
    double distOaOb, distOaOc, distObOc, distOcOd, distObOd, distOcOe, distOdOe, distOdOf, distOeOf;
    double angleOaObOc, angleObOcOd, angleOcOdOe, angleOeOdOf;
    int s1s1hbdn, s1s1hban;
-   int s1a[50], s1b[50], s1s1v1[50], s1s1v2[50], s1s1v3[50], s1s1v4[50], s1s1v5[50];
-   double s1as1bBD[50], s1s1v6[50], *atmS1;
+   int s1a[NUM_INTER], s1b[NUM_INTER], s1s1v1[NUM_INTER], s1s1v2[NUM_INTER], s1s1v3[NUM_INTER], s1s1v4[NUM_INTER], s1s1v5[NUM_INTER];
+   double s1as1bBD[NUM_INTER], s1s1v6[NUM_INTER], *atmS1;
 
    nodei = ndX;
    s1s1hbdn = sXsXhbdn;
@@ -4879,8 +4879,8 @@ int ChemNetworkNew::ring_check(double *atmSX, int ndX, int opos, int sXsXhbdn, i
    double distOaOb, distOaOc, distObOc, distOcOd, distObOd, distOcOe, distOdOe, distOdOf, distOeOf;
    double angleOaObOc, angleObOcOd, angleOcOdOe, angleOdOeOf, distOeOa, distOfOa, angleOeOfOa;
    int s1s1hbdn, s1s1hban;
-   int s1a[50], s1b[50], s1s1v1[50], s1s1v2[50], s1s1v3[50], s1s1v4[50], s1s1v5[50];
-   double s1as1bBD[50], s1s1v6[50], *atmS1;
+   int s1a[NUM_INTER], s1b[NUM_INTER], s1s1v1[NUM_INTER], s1s1v2[NUM_INTER], s1s1v3[NUM_INTER], s1s1v4[NUM_INTER], s1s1v5[NUM_INTER];
+   double s1as1bBD[NUM_INTER], s1s1v6[NUM_INTER], *atmS1;
 
    nodei = ndX;
    s1s1hbdn = sXsXhbdn;

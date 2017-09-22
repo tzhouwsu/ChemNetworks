@@ -1,4 +1,4 @@
-CXX = g++ 
+CXX = g++
 CXXFLAGS = -g -O3
 #CXXFLAGS += -Wall
 LIBS = -lm

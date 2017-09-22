@@ -29,7 +29,7 @@ void ChemNetworkOrig::ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsol
   double *atmS1xyminz, *atmS1minxyz, *atmS1xminyz;
 
   int nodei, nodej, i, j, crt;
-  double dist, dist2, hyptns, ang; 
+  double dist, dist1, dist2, hyptns, ang; 
 
   nodei = nd1;
 
@@ -51,15 +51,17 @@ void ChemNetworkOrig::ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsol
 		ang = (s1s1v6[crt] + s1s1v7[crt])/2;  // 2016 July, default value if angle is not specified
                 if(s1s1v1[crt] == 1 && s1s1v2[crt] == 2)
                 {
+                   dist1 = distance(atmS1, i, j, s1s1v3, s1s1v4, crt);
                    dist2 = distance(atmS1, j, j, s1s1v4, s1s1v5, crt);
                    hyptns = distance(atmS1, i, j, s1s1v3, s1s1v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
                 if(s1s1v1[crt] == 2 && s1s1v2[crt] == 1)
                 {
+                   dist1 = distance(atmS1, i, j, s1s1v4, s1s1v5, crt);
                    dist2 = distance(atmS1, i, i, s1s1v3, s1s1v4, crt);
                    hyptns = distance(atmS1, i, j, s1s1v3, s1s1v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
 //                if(dist < s1as1bBD[crt] && ang > s1s1v6[crt])
                 if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt] && ang > s1s1v6[crt] && ang < s1s1v7[crt]) // 2015.12.15, changed, Tiecheng
@@ -270,7 +272,7 @@ void ChemNetworkOrig::graph_sAsB(double *atmS1, double *atmS2, int nd1, int nd2,
   double *atmS2minxminyz, *atmS2xminyminz, *atmS2minxyminz;
 
   int nodei, nodej, i, j, crt;
-  double dist, dist2, hyptns, ang; 
+  double dist, dist1, dist2, hyptns, ang; 
 
   nodei = nd1;
 
@@ -292,15 +294,17 @@ void ChemNetworkOrig::graph_sAsB(double *atmS1, double *atmS2, int nd1, int nd2,
 		ang = (s1s2v6[crt] + s1s2v7[crt])/2;  // 2016 July, default value if angle is not specified
                 if(s1s2v1[crt] == 1 && s1s2v2[crt] == 2)
                 {
+                   dist1 = distanceMix(atmS1, atmS2, i, j, s1s2v3, s1s2v4, crt);
                    dist2 = distance(atmS2, j, j, s1s2v4, s1s2v5, crt);
                    hyptns = distanceMix(atmS1, atmS2, i, j, s1s2v3, s1s2v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
                 if(s1s2v1[crt] == 2 && s1s2v2[crt] == 1)
                 {
+                   dist1 = distanceMix(atmS1, atmS2, i, j, s1s2v4, s1s2v5, crt);
                    dist2 = distance(atmS1, i, i, s1s2v3, s1s2v4, crt);
                    hyptns = distanceMix(atmS1, atmS2, i, j, s1s2v3, s1s2v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
 //                if(dist < s12as12bBD[crt] && ang > s1s2v6[crt])
                 if(dist < s12as12bBDmax[crt] && dist > s12as12bBDmin[crt] && ang > s1s2v6[crt] && ang < s1s2v7[crt]) // 2015.12.15, changed, Tiecheng
@@ -1037,7 +1041,7 @@ void ChemNetworkOrig::search_pbc_gss(int boxid, double *atmS1, double *atmS1x, i
                     int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1)
 {
   int nodei, nodej, i, j, crt;
-  double dist, dist2, hyptns, ang; 
+  double dist, dist1, dist2, hyptns, ang; 
 
   nodei = nd1;
 
@@ -1059,15 +1063,17 @@ void ChemNetworkOrig::search_pbc_gss(int boxid, double *atmS1, double *atmS1x, i
 		ang = (s1s1v6[crt] + s1s1v7[crt])/2;  // 2016 July, default value if angle is not specified
                 if(s1s1v1[crt] == 1 && s1s1v2[crt] == 2)
                 {
+                   dist1 = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v4, crt);
                    dist2 = distance(atmS1, j, j, s1s1v4, s1s1v5, crt);
                    hyptns = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
                 if(s1s1v1[crt] == 2 && s1s1v2[crt] == 1)
                 {
+                   dist1 = distanceMix(atmS1, atmS1x, i, j, s1s1v4, s1s1v5, crt);
                    dist2 = distance(atmS1, i, i, s1s1v3, s1s1v4, crt);
                    hyptns = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
          //       if(dist < s1as1bBD[crt] && ang > s1s1v6[crt])
                 if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt] && ang > s1s1v6[crt] && ang < s1s1v7[crt]) // 2015.12.15, changed, Tiecheng
@@ -1111,7 +1117,7 @@ void ChemNetworkOrig::search_pbc_gsAsB(int boxid, double *atmS1, double *atmS2x,
                       FILE *outputfGraphS1S2, FILE *outputfGeodS1S2)
 {
   int nodei, nodej, i, j, crt;
-  double dist, dist2, hyptns, ang; 
+  double dist, dist1, dist2, hyptns, ang; 
 
   nodei = nd1;
 
@@ -1133,15 +1139,17 @@ void ChemNetworkOrig::search_pbc_gsAsB(int boxid, double *atmS1, double *atmS2x,
 		ang = (s1s2v6[crt] + s1s2v7[crt])/2;  // 2016 July, default value if angle is not specified
                 if(s1s2v1[crt] == 1 && s1s2v2[crt] == 2)
                 {
+                   dist1 = distanceMix(atmS1, atmS2x, i, j, s1s2v3, s1s2v4, crt);
                    dist2 = distance(atmS2x, j, j, s1s2v4, s1s2v5, crt);
                    hyptns = distanceMix(atmS1, atmS2x, i, j, s1s2v3, s1s2v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
                 if(s1s2v1[crt] == 2 && s1s2v2[crt] == 1)
                 {
+                   dist1 = distanceMix(atmS1, atmS2x, i, j, s1s2v4, s1s2v5, crt);
                    dist2 = distance(atmS1, i, i, s1s2v3, s1s2v4, crt);
                    hyptns = distanceMix(atmS1, atmS2x, i, j, s1s2v3, s1s2v5, crt);
-                   ang = angle(dist, dist2, hyptns); 
+                   ang = angle(dist1, dist2, hyptns); 
                 }
              //   if(dist < s12as12bBD[crt] && ang > s1s2v6[crt])
                 if(dist < s12as12bBDmax[crt] && dist > s12as12bBDmin[crt] && ang > s1s2v6[crt] && ang < s1s2v7[crt])  // 2015.12.15, changed, Tiecheng

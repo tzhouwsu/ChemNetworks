@@ -7,6 +7,8 @@
 #define LARGE 100000
 #define MAX 100000
 
+#define NUM_INTER 50
+
 #define PI 3.14159265
 
 #endif
