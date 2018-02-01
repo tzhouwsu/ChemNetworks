@@ -26,7 +26,7 @@ using namespace CN_NS;
 void ChemNetworkOrig::input_read(int argc, char *argv[]){
 
 // 2016.July : here I want to initilize the cutoffs so that the code can handle the case without cutoffs, for example discard the angle cutoffs in solvent-solvent graphs
-    for(i=0;i<50;i++)
+    for(i=0;i<NUM_INTER;i++)  // NUM_INTER is defined in common.h, and the array is defined in chemnetworks_orig.h, Tiecheng
     {
         s1s1v6[i] = s2s2v6[i] = s3s3v6[i] = s1s2v6[i] = s1s3v6[i] = s2s3v6[i] = -1.0; // default lower cutoff in angle of solvent-solvent, (real angle is in the range of 0.0 to 180.0)
         s1s1v7[i] = s2s2v7[i] = s3s3v7[i] = s1s2v7[i] = s1s3v7[i] = s2s3v7[i] = 181.0; // default upper cutoff in angle of solvent-solvent, (real angle is in the range of 0.0 to 180.0)
@@ -342,7 +342,78 @@ if(nsolutetype == 2)
 
     rewind(fd);
 
-  }
+    // here I'm adding keywords for energetic definition for water-water, Tiecheng
+    E_s1s1_num = 0; E_s1s1_charge_num = 0; E_s1s1_LJ_num = 0;    // initialize
+    for(i=0; i < NUM_INTER; i++)
+    {
+       E_s1s1v1[i] = E_s1s1v2[i] = 1;
+       E_s1s1_min[i] = -100.0; E_s1s1_max[i] = 100.0;
+       E_s1s1_charge_index[i] = 1;
+       E_s1s1_charge_value[i] = 0.0;
+       E_s1s1_LJ_index_a[i] = E_s1s1_LJ_index_b[i] = 1;
+       E_s1s1_LJ_value_sigma[i] = E_s1s1_LJ_value_epsilon[i] = 0.0;
+    }
+
+    if(findf(fd, 4, "[SOLVENT1", "SOLVENT1", "HBOND", "ENERGY]")==EOF){  // this keyword should be optional
+      printf("Warning cannot find [SOLVENT1 SOLVENT1 HBOND ENERGY] keyword, no pair-energy definition is used\n");
+    }
+    else   // pair energy calculation (only for SPC, SPC/E water currently) is requested
+    {
+      if(fscanf(fd,"%d",&E_s1s1_num)!=1){
+        printf("Cannot read [SOLVENT1 SOLVENT1 HBOND ENERGY] value\n");
+        exit(-1);
+      }
+
+      for(i=0; i < E_s1s1_num; i++){
+        if(fscanf(fd, "%d %d %lf %lf", &E_s1s1v1[i], &E_s1s1v2[i], &E_s1s1_min[i], &E_s1s1_max[i]) != 4) {
+          printf("Solvent1-Solvent1: Cannot read HBOND ENERGY pairs and values\n");
+          exit(-1);
+        }
+      }
+
+      rewind(fd);
+ 
+      if(findf(fd, 5, "[CHARGES", "OF", "ATOMS", "IN", "SOLVENT1]")==EOF){
+        printf("Cannot find [CHARGES OF ATOMS IN SOLVENT1] keyword\n");
+        exit(-1);
+      }
+
+      if(fscanf(fd,"%d",&E_s1s1_charge_num)!=1){
+        printf("Cannot read [CHARGES OF ATOMS IN SOLVENT1] value\n");
+        exit(-1);
+      }
+
+      for(i=0; i<E_s1s1_charge_num; i++){
+        if(fscanf(fd, "%d %lf", &E_s1s1_charge_index[i], &E_s1s1_charge_value[i]) != 2){
+           printf("Solvent1-Solvent1: Cannot read [CHARGES OF ATOMS IN SOLVENT1] values\n");
+           exit(-1);
+        }
+      }
+ 
+      rewind(fd);
+
+      if(findf(fd, 6, "[LJ", "PARAMETERS", "OF", "ATOMS", "IN", "SOLVENT1]")==EOF){
+        printf("Cannot find [LJ PARAMETERS OF ATOMS IN SOLVENT1] keyword\n");
+        exit(-1);
+      }
+
+      if(fscanf(fd,"%d",&E_s1s1_LJ_num)!=1){
+        printf("Cannot find [LJ PARAMETERS OF ATOMS IN SOLVENT1] value\n");
+        exit(-1);
+      }
+
+      for(i=0; i<E_s1s1_LJ_num; i++){
+        if(fscanf(fd, "%d %d %lf %lf",&E_s1s1_LJ_index_a[i],&E_s1s1_LJ_index_b[i],&E_s1s1_LJ_value_sigma[i],&E_s1s1_LJ_value_epsilon[i]) != 4){
+          printf("Solvent1-Solven1: Cannot read [LJ PARAMETERS OF ATOMS IN SOLVENT1] values\n");
+          exit(-1);
+        }
+      }
+
+      rewind(fd);
+   }  // this is the end of if-else statement for ENERGY keyword
+
+   rewind(fd);
+  }  // this is the end of if(gs1s1==1)
 
 
  // GRAPH SOLVENT2 SOLVENT2 keyword 
@@ -2176,11 +2247,33 @@ if(gs1s1 == 1)   // 2015.12.14, Output file name format here, Tiecheng
  outputfNumnodesS1S1 = fopen(foutputNumnodesS1S1,"w"); }
 
  // Construct the solvent1-solvent1 graph
- 
+
+  // add enegetic calculation is requested for water
+  if(E_s1s1_num > 0 && E_s1s1_charge_num > 0 && E_s1s1_LJ_num > 0) 
+  {
+    if( strcmp(slvntatm1[0],"O")==0 && strcmp(slvntatm1[1],"H")==0 && strcmp(slvntatm1[1],"H")==0 )  // energetics is implemented for water as solvent1 only
+    {
+      graph_ss_E(atmS1, 1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban, s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7,
+                 pbc, xside, yside, zside, outputfGraphS1S1, outputfGeodS1S1, E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num,
+                 E_s1s1_charge_value, E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);    
+    }
+    else
+    {
+      printf("Warning: energetic calculation is only implimented for water\n");
+
+// graph_ss(atmS1, 1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBD, s1s1hban, s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6,
+//          pbc, xside, yside, zside, outputfGraphS1S1, outputfGeodS1S1);
+      graph_ss(atmS1, 1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban, s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7,
+               pbc, xside, yside, zside, outputfGraphS1S1, outputfGeodS1S1);    // 2015.12.15, I changed here, Tiecheng
+    }
+  }
+  else  // the pair energy definition is not requested, use the previous function
+  {
 // graph_ss(atmS1, 1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBD, s1s1hban, s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6,
 //          pbc, xside, yside, zside, outputfGraphS1S1, outputfGeodS1S1);
   graph_ss(atmS1, 1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban, s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7,
            pbc, xside, yside, zside, outputfGraphS1S1, outputfGeodS1S1);    // 2015.12.15, I changed here, Tiecheng
+  }
 
 
 if(pnumnodes==1) fprintf(outputfNumnodesS1S1,"%d\n",(nAtomS1 / nsolvent1));

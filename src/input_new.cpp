@@ -27,7 +27,7 @@ void ChemNetworkNew::input_read(int argc, char *argv[]){
 
   // 2016.July : here I want to initilize the cutoffs so that the code can handle the case without cutoffs,
   // for example discard the angle cutoffs in solvent-solvent graphs
-  for(i=0; i<50; i++) {
+  for(i=0; i < NUM_INTER; i++) {    // NUM_INTER is defined in common.h, and the array is defined in chemnetworks_new.h, Tiecheng
     // default lower cutoff in angle of solvent-solvent, (real angle is in the range of 0.0 to 180.0)
     s1s1v6[i] = s2s2v6[i] = s3s3v6[i] = s1s2v6[i] = s1s3v6[i] = s2s3v6[i] = -1.0;
 

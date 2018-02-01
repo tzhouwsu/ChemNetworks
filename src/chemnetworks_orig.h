@@ -37,6 +37,13 @@ namespace CN_NS {
     /* graph types */
     
     // here I changed the graph functions, consider an upper boundary and a lower boundary
+
+//added energetic definition for solvent1-solvent1 (water-water)
+    void graph_ss_E(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax,
+              int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
+              int pbc, double xside, double yside, double zside, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1,
+              int E_s1s1_num, int *E_s1s1v1, int *E_s1s1v2, double *E_s1s1_min, double *E_s1s1_max, int E_s1s1_charge_num, double *E_s1s1_charge_value, int E_s1s1_LJ_num,
+              int *E_s1s1_LJ_index_a, int *E_s1s1_LJ_index_b, double *E_s1s1_LJ_value_sigma, double *E_s1s1_LJ_value_epsilon);
     
     void graph_ss(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax,
 		  int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
@@ -49,6 +56,12 @@ namespace CN_NS {
     
     void graph_st(double *atmS1, double *atmT1, int nd1, int nd2, int nsolvent1, int nsolute1, int nAtomS1, int nAtomT1, int s1t1cutoffnum, int *s1t1a, int *s1t1b,
 		  double *s1t1cutoffmin, double *s1t1cutoffmax, int pbc, double xside, double yside, double zside, FILE *outputfGraphS1T1, FILE *outputfGeodS1T1);
+
+//added energetic definition for solvent1-solvent1 (water-water)
+    void search_pbc_gss_E(int boxid, double *atmS1, double *atmS1x, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax,
+                    int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1,
+                    int E_s1s1_num, int *E_s1s1v1, int *E_s1s1v2, double *E_s1s1_min, double *E_s1s1_max, int E_s1s1_charge_num, double *E_s1s1_charge_value,
+                    int E_s1s1_LJ_num, int *E_s1s1_LJ_index_a, int *E_s1s1_LJ_index_b, double *E_s1s1_value_sigma, double *E_s1s1_value_epsilon);
     
     void search_pbc_gss(int boxid, double *atmS1, double *atmS1x, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, int s1s1hban,
 			int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1);
@@ -439,6 +452,19 @@ namespace CN_NS {
 //       double s1t1cutoff[NUM_INTER], s1t2cutoff[NUM_INTER], s2t1cutoff[NUM_INTER], s2t2cutoff[NUM_INTER], s3t1cutoff[NUM_INTER], s3t2cutoff[NUM_INTER];  // 2015.12.14 ,I want to have both lower boundary and upper boundary for HB distance, Tiecheng
        double s1t1cutoffmin[NUM_INTER], s1t2cutoffmin[NUM_INTER], s2t1cutoffmin[NUM_INTER], s2t2cutoffmin[NUM_INTER], s3t1cutoffmin[NUM_INTER], s3t2cutoffmin[NUM_INTER];
        double s1t1cutoffmax[NUM_INTER], s1t2cutoffmax[NUM_INTER], s2t1cutoffmax[NUM_INTER], s2t2cutoffmax[NUM_INTER], s3t1cutoffmax[NUM_INTER], s3t2cutoffmax[NUM_INTER];
+
+
+       // here I'm, adding the water-water pair energy definition in solvent-solvent graph, Tiecheng
+       int E_s1s1_num;
+       int E_s1s1v1[NUM_INTER], E_s1s1v2[NUM_INTER];
+       double E_s1s1_min[NUM_INTER], E_s1s1_max[NUM_INTER];
+       int E_s1s1_charge_num;
+       int E_s1s1_charge_index[NUM_INTER];
+       double E_s1s1_charge_value[NUM_INTER];
+       int E_s1s1_LJ_num;
+       int E_s1s1_LJ_index_a[NUM_INTER], E_s1s1_LJ_index_b[NUM_INTER];
+       double E_s1s1_LJ_value_sigma[NUM_INTER], E_s1s1_LJ_value_epsilon[NUM_INTER];
+
 
        double xside, yside, zside;
 

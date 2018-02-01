@@ -16,9 +16,296 @@
 
 #include "chemnetworks_orig.h"
 
+#define K_Coul 332.0637  // this is the Coulomb's constant in unit of kcal mol^-1 e^-2 A^2
+
 using namespace CN_NS;
 
 // Same solvent graphs
+
+//added energetic definition for solvent1-solvent1 (water-water)
+void ChemNetworkOrig::ChemNetworkOrig::graph_ss_E(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
+              int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
+              int pbc, double xside, double yside, double zside, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1,
+              int E_s1s1_num, int *E_s1s1v1, int *E_s1s1v2, double *E_s1s1_min, double *E_s1s1_max, int E_s1s1_charge_num, double *E_s1s1_charge_value, int E_s1s1_LJ_num,
+              int *E_s1s1_LJ_index_a, int *E_s1s1_LJ_index_b, double *E_s1s1_LJ_value_sigma, double *E_s1s1_LJ_value_epsilon)
+{
+  double *atmS1x, *atmS1y, *atmS1z, *atmS1xy, *atmS1yz, *atmS1zx;
+  double *atmS1xminy, *atmS1minyz, *atmS1zminx, *atmS1xyz;  
+  double *atmS1xyminz, *atmS1minxyz, *atmS1xminyz;
+
+  int nodei, nodej, i, j, crt, k, m;
+  double dist, dist1, dist2, hyptns, ang, E_pair, dist_pair, q1, q2; 
+
+  nodei = nd1;
+
+  for(i = 0; i < (nAtomS1 - nsolvent1); i = i + nsolvent1)
+  {
+    nodej = nodei + 1;
+     
+    for(j = i + nsolvent1; j < nAtomS1; j = j + nsolvent1)
+    {
+
+        for(crt = 0; crt < s1s1hbdn; crt++)
+        {
+
+           dist = distance(atmS1, i, j, s1a, s1b, crt);
+
+//           if(dist < s1as1bBD[crt])
+           if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt]) // 2015.12.15, changed, Tiecheng
+           {
+		ang = (s1s1v6[crt] + s1s1v7[crt])/2;  // 2016 July, default value if angle is not specified
+                if(s1s1v1[crt] == 1 && s1s1v2[crt] == 2)
+                {
+                   dist1 = distance(atmS1, i, j, s1s1v3, s1s1v4, crt);
+                   dist2 = distance(atmS1, j, j, s1s1v4, s1s1v5, crt);
+                   hyptns = distance(atmS1, i, j, s1s1v3, s1s1v5, crt);
+                   ang = angle(dist1, dist2, hyptns); 
+                }
+                if(s1s1v1[crt] == 2 && s1s1v2[crt] == 1)
+                {
+                   dist1 = distance(atmS1, i, j, s1s1v4, s1s1v5, crt);
+                   dist2 = distance(atmS1, i, i, s1s1v3, s1s1v4, crt);
+                   hyptns = distance(atmS1, i, j, s1s1v3, s1s1v5, crt);
+                   ang = angle(dist1, dist2, hyptns); 
+                }
+            }
+
+            E_pair = 0.0;
+            for(k=0; k < E_s1s1_LJ_num; k++) // all the possible interaction sites
+            {
+                dist_pair = distance(atmS1, i, j, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, k);
+                q1 = q2 = 0.0;
+                for(m=0; m<E_s1s1_charge_num; m++)   // find the charge
+                {
+                   if(E_s1s1_charge_index[m] == E_s1s1_LJ_index_a[k])
+                     q1 = E_s1s1_charge_value[m];
+                   if(E_s1s1_charge_index[m] == E_s1s1_LJ_index_b[k])
+                     q2 = E_s1s1_charge_value[m];
+                }
+                E_pair += K_Coul * q1 * q2 / dist_pair + 4 * E_s1s1_LJ_value_epsilon[k] *(pow(E_s1s1_LJ_value_sigma[k]/dist_pair,12) - pow(E_s1s1_LJ_value_sigma[k]/dist_pair,6));
+  //              printf("%d %d %d : %d %d %d %f %f %f\n",i,j,0,k,E_s1s1_LJ_index_a[k],E_s1s1_LJ_index_b[k], dist_pair, K_Coul * q1 * q2, 4 * E_s1s1_LJ_value_epsilon[k] *(pow(E_s1s1_LJ_value_sigma[k]/dist_pair,12) - pow(E_s1s1_LJ_value_sigma[k]/dist_pair,6)) );
+            }
+  //          printf("%d %d %d: %f\n",i,j,0,E_pair);
+
+//                if(dist < s1as1bBD[crt] && ang > s1s1v6[crt])
+           if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt] && ang > s1s1v6[crt] && ang < s1s1v7[crt] && E_pair > E_s1s1_min[crt] && E_pair < E_s1s1_max[crt]) // added pair energy
+           {
+               fprintf(outputfGraphS1S1,"%d\n%d\n",nodei,nodej);
+               fprintf(outputfGeodS1S1,"%d %d 0 0 0 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang, E_pair);
+           }
+
+        } 
+
+    nodej = nodej + 1;
+   
+    }
+
+  nodei = nodei + 1;
+
+  }
+
+// check PBC and include in the graph if requested
+
+ if(pbc == 1)
+ {
+   // allocate memory
+
+   atmS1x = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1y = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1z = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1xy = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1yz = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1zx = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1xminy = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1minyz = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1zminx = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1xyz = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1xyminz = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1minxyz = (double*)malloc((3*nAtomS1)*sizeof(double));
+   atmS1xminyz = (double*)malloc((3*nAtomS1)*sizeof(double));   
+
+   // get all the PBC Boxes
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1x[3*(i+1)-3] = atmS1[3*(i+1)-3] + xside;
+     atmS1x[3*(i+1)-2] = atmS1[3*(i+1)-2];
+     atmS1x[3*(i+1)-1] = atmS1[3*(i+1)-1];
+   }
+   
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1y[3*(i+1)-3] = atmS1[3*(i+1)-3];
+     atmS1y[3*(i+1)-2] = atmS1[3*(i+1)-2] + yside;
+     atmS1y[3*(i+1)-1] = atmS1[3*(i+1)-1];
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1z[3*(i+1)-3] = atmS1[3*(i+1)-3];
+     atmS1z[3*(i+1)-2] = atmS1[3*(i+1)-2];
+     atmS1z[3*(i+1)-1] = atmS1[3*(i+1)-1] + zside;
+   }
+ 
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1xy[3*(i+1)-3] = atmS1x[3*(i+1)-3];
+     atmS1xy[3*(i+1)-2] = atmS1x[3*(i+1)-2] + yside;
+     atmS1xy[3*(i+1)-1] = atmS1x[3*(i+1)-1];
+   }
+ 
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1yz[3*(i+1)-3] = atmS1y[3*(i+1)-3];
+     atmS1yz[3*(i+1)-2] = atmS1y[3*(i+1)-2];
+     atmS1yz[3*(i+1)-1] = atmS1y[3*(i+1)-1] + zside;
+   }   
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1zx[3*(i+1)-3] = atmS1z[3*(i+1)-3] + xside;
+     atmS1zx[3*(i+1)-2] = atmS1z[3*(i+1)-2];
+     atmS1zx[3*(i+1)-1] = atmS1z[3*(i+1)-1];
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1xminy[3*(i+1)-3] = atmS1x[3*(i+1)-3];
+     atmS1xminy[3*(i+1)-2] = atmS1x[3*(i+1)-2] - yside;
+     atmS1xminy[3*(i+1)-1] = atmS1x[3*(i+1)-1];
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1minyz[3*(i+1)-3] = atmS1z[3*(i+1)-3];
+     atmS1minyz[3*(i+1)-2] = atmS1z[3*(i+1)-2] - yside;
+     atmS1minyz[3*(i+1)-1] = atmS1z[3*(i+1)-1];
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1zminx[3*(i+1)-3] = atmS1z[3*(i+1)-3] - xside;
+     atmS1zminx[3*(i+1)-2] = atmS1z[3*(i+1)-2];
+     atmS1zminx[3*(i+1)-1] = atmS1z[3*(i+1)-1];
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1xyz[3*(i+1)-3] = atmS1xy[3*(i+1)-3];
+     atmS1xyz[3*(i+1)-2] = atmS1xy[3*(i+1)-2];
+     atmS1xyz[3*(i+1)-1] = atmS1xy[3*(i+1)-1] + zside;
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1xyminz[3*(i+1)-3] = atmS1xy[3*(i+1)-3];
+     atmS1xyminz[3*(i+1)-2] = atmS1xy[3*(i+1)-2];
+     atmS1xyminz[3*(i+1)-1] = atmS1xy[3*(i+1)-1] - zside;
+   }
+
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1minxyz[3*(i+1)-3] = atmS1yz[3*(i+1)-3] - xside;
+     atmS1minxyz[3*(i+1)-2] = atmS1yz[3*(i+1)-2];
+     atmS1minxyz[3*(i+1)-1] = atmS1yz[3*(i+1)-1];
+   }
+   
+   for(i=0; i < nAtomS1; i++)
+   {
+     atmS1xminyz[3*(i+1)-3] = atmS1minyz[3*(i+1)-3] + xside;
+     atmS1xminyz[3*(i+1)-2] = atmS1minyz[3*(i+1)-2];
+     atmS1xminyz[3*(i+1)-1] = atmS1minyz[3*(i+1)-1];
+   }
+
+
+   search_pbc_gss_E(1, atmS1, atmS1x, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(2, atmS1, atmS1y, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(3, atmS1, atmS1z, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(4, atmS1, atmS1xy, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(5, atmS1, atmS1yz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(6, atmS1, atmS1zx, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(7, atmS1, atmS1xminy, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(8, atmS1, atmS1minyz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(9, atmS1, atmS1zminx, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(10, atmS1, atmS1xyz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(11, atmS1, atmS1xyminz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(12, atmS1, atmS1minxyz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+   search_pbc_gss_E(13, atmS1, atmS1xminyz, nd1, nsolvent1, nAtomS1, s1s1hbdn, s1a, s1b, s1as1bBDmin, s1as1bBDmax, s1s1hban,
+                  s1s1v1, s1s1v2, s1s1v3, s1s1v4, s1s1v5, s1s1v6, s1s1v7, outputfGraphS1S1, outputfGeodS1S1,
+                  E_s1s1_num, E_s1s1v1, E_s1s1v2, E_s1s1_min, E_s1s1_max, E_s1s1_charge_num, E_s1s1_charge_value,
+                  E_s1s1_LJ_num, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, E_s1s1_LJ_value_sigma, E_s1s1_LJ_value_epsilon);
+
+
+    // free memory
+
+    free(atmS1x);
+    free(atmS1y);
+    free(atmS1z);
+    free(atmS1xy);
+    free(atmS1yz);
+    free(atmS1zx);
+    free(atmS1xminy);
+    free(atmS1minyz);
+    free(atmS1zminx);    
+    free(atmS1xyz);
+    free(atmS1xyminz);
+    free(atmS1minxyz);
+    free(atmS1xminyz);
+
+ } // Close if(pbc == 1)...
+
+}
+
+
+
 
 void ChemNetworkOrig::ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
               int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
@@ -255,6 +542,7 @@ void ChemNetworkOrig::ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsol
  } // Close if(pbc == 1)...
 
 }
+
 
 // Mixed solvent graphs
 
@@ -1037,6 +1325,99 @@ void ChemNetworkOrig::graph_st(double *atmS1, double *atmT1, int nd1, int nd2, i
 
 // search for bonding through periodic boundary conditions (same solvent-solvent)
 
+void ChemNetworkOrig::search_pbc_gss_E(int boxid, double *atmS1, double *atmS1x, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
+                    int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1,
+                    int E_s1s1_num, int *E_s1s1v1, int *E_s1s1v2, double *E_s1s1_min, double *E_s1s1_max, int E_s1s1_charge_num, double *E_s1s1_charge_value,
+                    int E_s1s1_LJ_num, int *E_s1s1_LJ_index_a, int *E_s1s1_LJ_index_b, double *E_s1s1_value_sigma, double *E_s1s1_value_epsilon)
+{
+  int nodei, nodej, i, j, crt, k, m;
+  double dist, dist1, dist2, hyptns, ang, E_pair, dist_pair, q1, q2; 
+
+  nodei = nd1;
+
+  for(i = 0; i < nAtomS1; i = i + nsolvent1)
+  {
+    nodej = nd1;
+     
+    for(j = 0; j < nAtomS1; j = j + nsolvent1)
+    {
+
+        for(crt = 0; crt < s1s1hbdn; crt++)
+        {
+
+           dist = distanceMix(atmS1, atmS1x, i, j, s1a, s1b, crt);
+
+      //     if(dist < s1as1bBD[crt])
+           if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt])   // 2015.12.15, changed, Tiecheng
+           {
+		ang = (s1s1v6[crt] + s1s1v7[crt])/2;  // 2016 July, default value if angle is not specified
+                if(s1s1v1[crt] == 1 && s1s1v2[crt] == 2)
+                {
+                   dist1 = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v4, crt);
+                   dist2 = distance(atmS1, j, j, s1s1v4, s1s1v5, crt);
+                   hyptns = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v5, crt);
+                   ang = angle(dist1, dist2, hyptns); 
+                }
+                if(s1s1v1[crt] == 2 && s1s1v2[crt] == 1)
+                {
+                   dist1 = distanceMix(atmS1, atmS1x, i, j, s1s1v4, s1s1v5, crt);
+                   dist2 = distance(atmS1, i, i, s1s1v3, s1s1v4, crt);
+                   hyptns = distanceMix(atmS1, atmS1x, i, j, s1s1v3, s1s1v5, crt);
+                   ang = angle(dist1, dist2, hyptns); 
+                }
+            }
+
+            E_pair = 0.0;
+            for(k=0; k < E_s1s1_LJ_num; k++)
+            {
+                dist_pair = distanceMix(atmS1, atmS1x, i, j, E_s1s1_LJ_index_a, E_s1s1_LJ_index_b, k);
+                q1 = q2 = 0.0;
+                for(m=0; m < E_s1s1_charge_num; m++)
+                {
+                   if(E_s1s1_charge_index[m] == E_s1s1_LJ_index_a[k])
+                      q1 = E_s1s1_charge_value[m];
+                   if(E_s1s1_charge_index[m] == E_s1s1_LJ_index_b[k])
+                      q2 = E_s1s1_charge_value[m];
+                }
+                E_pair += K_Coul * q1 * q2 / dist_pair + 4 * E_s1s1_LJ_value_epsilon[k] *(pow(E_s1s1_LJ_value_sigma[k]/dist_pair,12) - pow(E_s1s1_LJ_value_sigma[k]/dist_pair,6));
+            }
+   //         printf("%d %d %d : %f\n",i,j,boxid,E_pair);
+
+         //       if(dist < s1as1bBD[crt] && ang > s1s1v6[crt])
+                if(dist < s1as1bBDmax[crt] && dist > s1as1bBDmin[crt] && ang > s1s1v6[crt] && ang < s1s1v7[crt] && E_pair > E_s1s1_min[crt] && E_pair < E_s1s1_max[crt])
+                {
+                   fprintf(outputfGraphS1S1,"%d\n%d\n",nodei,nodej);
+                   
+                   if(boxid == 1) fprintf(outputfGeodS1S1,"%d %d 1 0 0 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 2) fprintf(outputfGeodS1S1,"%d %d 0 1 0 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 3) fprintf(outputfGeodS1S1,"%d %d 0 0 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 4) fprintf(outputfGeodS1S1,"%d %d 1 1 0 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 5) fprintf(outputfGeodS1S1,"%d %d 0 1 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 6) fprintf(outputfGeodS1S1,"%d %d 1 0 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 7) fprintf(outputfGeodS1S1,"%d %d 1 -1 0 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 8) fprintf(outputfGeodS1S1,"%d %d 0 -1 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 9) fprintf(outputfGeodS1S1,"%d %d -1 0 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 10) fprintf(outputfGeodS1S1,"%d %d 1 1 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 11) fprintf(outputfGeodS1S1,"%d %d 1 1 -1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 12) fprintf(outputfGeodS1S1,"%d %d -1 1 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+                   if(boxid == 13) fprintf(outputfGeodS1S1,"%d %d 1 -1 1 %d %d %.3f %.2f %f\n",nodei,nodej,s1a[crt],s1b[crt],dist,ang,E_pair);
+
+                }
+
+        } 
+
+    nodej = nodej + 1;
+   
+    }
+
+  nodei = nodei + 1;
+
+  }
+
+}
+
+
+
 void ChemNetworkOrig::search_pbc_gss(int boxid, double *atmS1, double *atmS1x, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, int s1s1hban,
                     int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1)
 {
@@ -1109,6 +1490,7 @@ void ChemNetworkOrig::search_pbc_gss(int boxid, double *atmS1, double *atmS1x, i
   }
 
 }
+
 
 // search for bonding through periodic boundary conditions (other solvent-solvent)
 
