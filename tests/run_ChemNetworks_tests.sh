@@ -7,9 +7,11 @@ echo "test1.."
 cd ./test1/
 cp ../../src/ChemNetworks-2.2.exe ./
 ./ChemNetworks-2.2.exe Input-test1 water1.xyz
-lab=$?
+lab1=$?
+./ChemNetworks-2.2.exe Input-test1 water1.xyz -new
+lab2=$?
 
-if test $lab -eq 0; then
+if test $lab1 -eq 0 && test $lab2 -eq 0 ; then
   echo "test1 passed"
   echo ""
 
@@ -17,8 +19,10 @@ if test $lab -eq 0; then
   cd ../test2/
   cp ../../src/ChemNetworks-2.2.exe ./
   ./ChemNetworks-2.2.exe Input-test2 water1.xyz solB1.xyz
-  lab=$?
-  if test $lab -eq 0; then
+  lab1=$?
+#  ./ChemNetworks-2.2.exe Input-test2 water1.xyz solB1.xyz -new   # -new interface only works for 1 solvent
+#  lab2=$?
+  if test $lab1 -eq 0 && test $lab2 -eq 0 ; then
      echo "test2 passed"
      echo ""
 
@@ -26,8 +30,10 @@ if test $lab -eq 0; then
      cd ../test3/
      cp ../../src/ChemNetworks-2.2.exe ./
      ./ChemNetworks-2.2.exe Input-test3 water1.xyz solB1.xyz solC1.xyz
-     lab=$?
-     if test $lab -eq 0; then
+     lab1=$?
+#     ./ChemNetworks-2.2.exe Input-test3 water1.xyz solB1.xyz solC1.xyz -new
+#     lab2=$?
+     if test $lab1 -eq 0 && test $lab2 -eq 0 ; then
         echo "test3 passed"
         echo ""
 
@@ -35,8 +41,10 @@ if test $lab -eq 0; then
         cd ../test4/
         cp ../../src/ChemNetworks-2.2.exe ./
         ./ChemNetworks-2.2.exe Input-test4 water1.xyz solC1.xyz solB1.xyz
-        lab=$?
-        if test $lab -eq 0; then
+        lab1=$?
+#        ./ChemNetworks-2.2.exe Input-test4 water1.xyz solC1.xyz solB1.xyz -new
+#        lab2=$?
+        if test $lab1 -eq 0 && test $lab2 -eq 0 ; then
            echo "test4 passed"
            echo ""
         else
