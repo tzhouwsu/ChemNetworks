@@ -23,7 +23,7 @@ using namespace CN_NS;
 // Same solvent graphs
 
 //added energetic definition for solvent1-solvent1 (water-water)
-void ChemNetworkOrig::ChemNetworkOrig::graph_ss_E(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
+void ChemNetworkOrig::graph_ss_E(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
               int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
               int pbc, double xside, double yside, double zside, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1,
               int E_s1s1_num, int *E_s1s1v1, int *E_s1s1v2, double *E_s1s1_min, double *E_s1s1_max, int E_s1s1_charge_num, double *E_s1s1_charge_value, int E_s1s1_LJ_num,
@@ -307,7 +307,7 @@ void ChemNetworkOrig::ChemNetworkOrig::graph_ss_E(double *atmS1, int nd1, int ns
 
 
 
-void ChemNetworkOrig::ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
+void ChemNetworkOrig::graph_ss(double *atmS1, int nd1, int nsolvent1, int nAtomS1, int s1s1hbdn, int *s1a, int *s1b, double *s1as1bBDmin, double *s1as1bBDmax, 
               int s1s1hban, int *s1s1v1, int *s1s1v2, int *s1s1v3, int *s1s1v4, int *s1s1v5, double *s1s1v6, double *s1s1v7,
               int pbc, double xside, double yside, double zside, FILE *outputfGraphS1S1, FILE *outputfGeodS1S1)
 {
