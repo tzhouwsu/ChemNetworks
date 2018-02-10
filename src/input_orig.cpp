@@ -284,6 +284,423 @@ if(nsolutetype == 2)
       }
       rewind(fd);
 
+
+// Read weighted graph keyword
+
+  index_weighted_graph = 0; // setting the default values
+  index_wg_st1_cluster = 0;
+  for(i=0; i<NUM_INTER; i++)
+  {
+    cluster_st1_sv_type[i] = cluster_st1_atom[i] = cluster_st1_sv_atom[i] = 0;
+    cluster_st1_sv_dist_min[i] = 0.0;
+    cluster_st1_sv_dist_max[i] = xside+yside+zside;
+    atom1_wg_st1_sv1[i] = atom2_wg_st1_sv1[i] = atom1_wg_st1_sv2[i] = atom2_wg_st1_sv2[i] = 0;
+    atom1_wg_sv1_sv1[i] = atom2_wg_sv1_sv1[i] = atom1_wg_sv2_sv2[i] = atom2_wg_sv2_sv2[i] = atom1_wg_sv1_sv2[i] = atom2_wg_sv1_sv2[i] = 0;
+  }
+  index_wg_st1_sv1 = index_wg_st1_sv2 = 0;
+  num_wg_st1_sv1_dist = num_wg_st1_sv2_dist = 0;
+  funct_type_wg_st1_sv1 = funct_type_wg_st1_sv2 = 0;
+  funct_par1_wg_st1_sv1 = funct_par2_wg_st1_sv1 = funct_par1_wg_st1_sv2 = funct_par2_wg_st1_sv2 = 0.0;   // parameters in funct, currently 1.0 / (1.0 + exp(n0 * (r - r0)/r0))
+  index_wg_sv1_sv1 = index_wg_sv2_sv2 = index_wg_sv1_sv2 = 0;
+  num_wg_sv1_sv1_dist = num_wg_sv2_sv2_dist = num_wg_sv1_sv2_dist = 0;
+  funct_type_wg_sv1_sv1 = funct_type_wg_sv2_sv2 = funct_type_wg_sv1_sv2;
+  funct_par1_wg_sv1_sv1 = funct_par2_wg_sv1_sv1 = funct_par1_wg_sv2_sv2 = funct_par2_wg_sv2_sv2 = funct_par1_wg_sv1_sv2 = funct_par2_wg_sv1_sv2 = 0.0;
+
+  if(findf(fd, 2, "[WEIGHTED", "GRAPH]") != EOF){   // find this keyword, read the other informations
+    if(fscanf(fd, "%d", &index_weighted_graph) != 1){
+      printf("Cannot read the value YES(1) or NO(0) for WEIGHTED GRAPH keyword\n");
+      exit(-1);
+    }
+    
+    rewind(fd);
+
+    if(index_weighted_graph == 1)   // the weighted graph is requested, only works for { 1 solute + 1 or 2 solvent }, Feb-2018
+    {
+      /* one way to create the weighted graph is based on cluster of solute1 */
+      if(findf(fd, 5, "[WEIGHTED", "GRAPH", "BY", "SOLUTE1", "CLUSTER]") == EOF){
+        printf("Cannot find the keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n");
+        exit(-1);
+      }
+
+      if(fscanf(fd, "%d", &index_wg_st1_cluster) != 1){
+        printf("Cannot find the value of keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n");
+        exit(-1);
+      }
+
+      if(index_wg_st1_cluster < 0)
+      {
+        printf("Wrong value at keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n");
+        exit(-1);
+      }
+      else if(index_wg_st1_cluster > NUM_INTER)
+      {
+        printf("Size-overflow at keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER], default maximum %d\n",NUM_INTER);
+        exit(-1);
+      }
+      else
+      {
+        for(i=0; i < index_wg_st1_cluster; i++){
+          if(fscanf(fd, "%d %d %d %d %lf %lf", &wg_solute_type, &cluster_st1_sv_type[i], &cluster_st1_atom[i], &cluster_st1_sv_atom[i], 
+                    &cluster_st1_sv_dist_min[i], &cluster_st1_sv_dist_max[i]) != 6){
+             printf("Cannot read parameters in keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n");
+             exit(-1);
+          }
+
+          if(wg_solute_type != 1){  // it only works for 1 solute, the solute-id must be 1 currently, Feb-2018
+            printf("Wrong value in keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n Only solute1 is implimented, wait for the next version\n");
+            exit(-1);
+          }
+
+          if(cluster_st1_sv_type[i] < 0  || cluster_st1_sv_type[i] >= 3){  // it only works for 1 or 2 solvent, the solvent-id must be 1 or 2, Feb-2018
+            printf("Wrong value in keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n Only 1 or 2 solvent is implemented, wait for the next version\n");
+            exit(-1);
+          }
+        }
+
+        rewind(fd);
+
+      }  // this is the end of ' if(index_wg_st1_cluster < 0) else if.. '
+
+      rewind(fd);
+
+      /* create weighted graphs using other ways, for example, by solvent-solvent, solute-solvent type */
+      // .....
+
+      rewind(fd);
+
+      /* below are the edge definition, weighting function, parameters..  */
+      if(findsolvent(1, index_wg_st1_cluster, cluster_st1_sv_type) == 1){
+
+        if(findf(fd, 5, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT1]") == EOF){
+          printf("Cannot find the keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1]\n");
+          exit(-1);
+         }
+
+        if(fscanf(fd, "%d", &index_wg_st1_sv1) != 1){
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1]\n");
+          exit(-1);
+        }
+
+        rewind(fd);
+
+        if(index_wg_st1_sv1 == 1){   // weighted egde of solute1-solvent1 requested
+          if(findf(fd, 6, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT1", "DISTANCE]") == EOF){
+            printf("Cannot find the keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &num_wg_st1_sv1_dist) != 1){
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n");
+            exit(-1);
+          }
+
+          for(i=0; i < num_wg_st1_sv1_dist; i++){
+            if(fscanf(fd, "%d %d", &atom1_wg_st1_sv1[i], &atom2_wg_st1_sv1[i]) != 2){
+              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n");
+              exit(-1);
+            }
+          }
+
+          if(!(nsolventtype >= 1 && nsolutetype >= 1)){
+            printf("There is not enough solvent, solute type for [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1]\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+
+          if(findf(fd, 7, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT1", "DISTANCE", "FUNCTION]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &funct_type_wg_st1_sv1) != 1){
+            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(funct_type_wg_st1_sv1 == 1){  // function-type = 1, which is 1.0 / (1.0 + exp(n0 * (r - r0)/r0)), there are two parameters
+            if(fscanf(fd, "%lf %lf", &funct_par1_wg_st1_sv1, &funct_par2_wg_st1_sv1) != 2){
+              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n");
+              exit(-1);
+            }
+          }
+          else {  // other function formalism to be implemented here
+            printf("function formalism other than 1 is not implemented\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+        } // this is the end of ' if(index_wg_st1_sv1 == 1) '
+
+        rewind(fd);
+      }
+
+      rewind(fd);
+
+      if(findsolvent(2, index_wg_st1_cluster, cluster_st1_sv_type) == 1) {
+
+        if(findf(fd, 5, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT2]") == EOF){
+          printf("Cannot find the keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2]\n");
+          exit(-1);
+         }
+
+        if(fscanf(fd, "%d", &index_wg_st1_sv2) != 1){
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2]\n");
+          exit(-1);
+        }
+
+        if(index_wg_st1_sv2 == 1){   // weighted egde of solute1-solvent2 requested
+          if(findf(fd, 6, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT2", "DISTANCE]") == EOF){
+            printf("Cannot find the keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &num_wg_st1_sv2_dist) != 1){
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          for(i=0; i < num_wg_st1_sv2_dist; i++){
+            if(fscanf(fd, "%d %d", &atom1_wg_st1_sv2[i], &atom2_wg_st1_sv2[i]) != 2){
+              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n");
+              exit(-1);
+            }
+          }
+
+          if(!(nsolventtype >= 2 && nsolutetype >= 1)){
+            printf("There is not enough solvent, solute type for [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2]\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+
+          if(findf(fd, 7, "[WEIGHTED", "GRAPH", "EDGE", "SOLUTE1", "SOLVENT2", "DISTANCE", "FUNCTION]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &funct_type_wg_st1_sv2) != 1){
+            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(funct_type_wg_st1_sv2 == 1){  // function-type = 1, which is 1.0 / (1.0 + exp(n0 * (r - r0)/r0)), there are two parameters
+            if(fscanf(fd, "%lf %lf", &funct_par1_wg_st1_sv2, &funct_par2_wg_st1_sv2) != 2){
+              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n");
+              exit(-1);
+            }
+          }
+         else { // other weight function formalism to be implemented here
+            printf("function formalism other than 1 is not implemented\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+        }  // this is the end of ' if(index_wg_st1_sv2 == 1) ' 
+
+        rewind(fd);
+      }
+
+      rewind(fd);
+
+      if(findsolvent(1, index_wg_st1_cluster, cluster_st1_sv_type) == 1){
+
+        if(findf(fd, 5, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT1]") == EOF){  // weighted graph for solvent1-solvent1
+          printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1]\n");
+          exit(-1);
+        }
+
+        if(fscanf(fd, "%d", &index_wg_sv1_sv1) != 1){
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1]\n");
+          exit(-1);
+        }
+
+        rewind(fd);
+
+        if(index_wg_sv1_sv1 == 1){  // solvent1-solvent1 weighted graph requested
+          if(findf(fd, 6, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT1", "DISTANCE]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &num_wg_sv1_sv1_dist) != 1){
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n");
+            exit(-1);
+          }
+
+          for(i=0; i < num_wg_sv1_sv1_dist; i++){
+            if(fscanf(fd, "%d %d", &atom1_wg_sv1_sv1[i], &atom2_wg_sv1_sv1[i]) != 2){
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n");
+              exit(-1);
+            }
+          }
+
+          rewind(fd);
+
+          if(findf(fd, 7, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT1", "DISTANCE", "FUNCTION]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &funct_type_wg_sv1_sv1) != 1){
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(funct_type_wg_sv1_sv1 == 1) {
+            if(fscanf(fd, "%lf %lf", &funct_par1_wg_sv1_sv1, &funct_par2_wg_sv1_sv1) != 2){
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n");
+              exit(-1);
+            }
+          }
+          else {
+            printf("function formalism other than 1 is not implemented\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+        }  // this is the end of ' if(index_wg_sv1_sv1==1) '
+
+        rewind(fd);
+      }
+
+      rewind(fd);
+
+      if(findsolvent(2, index_wg_st1_cluster, cluster_st1_sv_type) == 1) {
+
+        if(findf(fd, 5, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT2", "SOLVENT2]") == EOF){  // weighted graph for solvent2-solvent2
+          printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2]\n");
+          exit(-1);
+        }
+
+        if(fscanf(fd, "%d", &index_wg_sv2_sv2) != 1){
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2]\n");
+          exit(-1);
+        }
+
+        rewind(fd);
+
+        if(index_wg_sv2_sv2 == 1){  // solvent2-solvent2 weighted graph requested
+          if(findf(fd, 6, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT2", "SOLVENT2", "DISTANCE]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &num_wg_sv2_sv2_dist) != 1){
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          for(i=0; i < num_wg_sv2_sv2_dist; i++){
+            if(fscanf(fd, "%d %d", &atom1_wg_sv2_sv2[i], &atom2_wg_sv2_sv2[i]) != 2){
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n");
+              exit(-1);
+            }
+          }
+
+          rewind(fd);
+
+          if(findf(fd, 7, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT2", "SOLVENT2", "DISTANCE", "FUNCTION]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &funct_type_wg_sv2_sv2) != 1){
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(funct_type_wg_sv2_sv2 == 1) {
+            if(fscanf(fd, "%lf %lf", &funct_par1_wg_sv2_sv2, &funct_par2_wg_sv2_sv2) != 2){
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n");
+              exit(-1);
+            }
+          }
+          else {
+            printf("function formalism other than 1 is not implemented\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+        }  // this is the end of ' if(index_wg_sv2_sv2==1) '
+
+        rewind(fd);
+      }
+
+      rewind(fd);
+
+      if(findsolvent(1, index_wg_st1_cluster, cluster_st1_sv_type) == 1 && findsolvent(2, index_wg_st1_cluster, cluster_st1_sv_type) == 1){
+
+        if(findf(fd, 5, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT2]") == EOF){  // weighted graph for solvent1-solvent2
+          printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2]\n");
+          exit(-1);
+        }
+
+        if(fscanf(fd, "%d", &index_wg_sv1_sv2) != 1){
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2]\n");
+          exit(-1);
+        }
+
+        rewind(fd);
+
+        if(index_wg_sv1_sv2 == 1){  // solvent1-solvent2 weighted graph requested
+          if(findf(fd, 6, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT2", "DISTANCE]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &num_wg_sv1_sv2_dist) != 1){
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n");
+            exit(-1);
+          }
+
+          for(i=0; i < num_wg_sv1_sv2_dist; i++){
+            if(fscanf(fd, "%d %d", &atom1_wg_sv1_sv2[i], &atom2_wg_sv1_sv2[i]) != 2){
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n");
+              exit(-1);
+            }
+          }
+
+          rewind(fd);
+
+          if(findf(fd, 7, "[WEIGHTED", "GRAPH", "EDGE", "SOLVENT1", "SOLVENT2", "DISTANCE", "FUNCTION]") == EOF){
+            printf("Cannot find keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(fscanf(fd, "%d", &funct_type_wg_sv1_sv2) != 1){
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n");
+            exit(-1);
+          }
+
+          if(funct_type_wg_sv1_sv2 == 1) {
+            if(fscanf(fd, "%lf %lf", &funct_par1_wg_sv1_sv2, &funct_par2_wg_sv1_sv2) != 2){
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n");
+              exit(-1);
+            }
+          }
+          else {
+            printf("function formalism other than 1 is not implemented\n");
+            exit(-1);
+          }
+
+          rewind(fd);
+        }  // this is the end of ' if(index_wg_sv1_sv2==1) '
+
+        rewind(fd);
+      }
+
+      rewind(fd);
+    } // this is the end of ' if(index_weighted_graph == 1) ' 
+
+    rewind(fd);
+
+  }  // this is the end of ' if(findf(fd, 2, "[WEIGHTED", "GRAPH]") != EOF) '
+
+  rewind(fd);
+
+
+
 // Read Graph Types 
 
  // GRAPH SOLVENT1 SOLVENT1 keyword 
@@ -2229,6 +2646,203 @@ for(i = 0; i < 3; i++)    // 2015.12.14, O and OW refer to water Oxygen
     if(strcmp(slvntatm3[i], "H") == 0 || strcmp(slvntatm3[i], "HW") == 0){ if(trs == 0){ h1pos = slvntatmnum3[i]; trs = trs + 1; } else h2pos = slvntatmnum3[i]; }
   }
 }
+
+
+
+
+// construct the requested Weighted Graph, Feb-2018
+if(index_weighted_graph == 1)   // when the weighted graph is requested
+{
+  sprintf(foutput_weighted_graph, "Weighted.Graph.%s",argv[1]);
+  output_weighted_graph = fopen(foutput_weighted_graph,"w");
+
+  /* select the molecules/atoms within the cluster calculation */
+  if(index_wg_st1_cluster >= 1)
+  {
+     if(nAtomT1 % nsolute1 != 0){
+       printf("Error in the coordinate file of solute1\n");
+       exit(-1);
+     }
+
+     num_mol_cluster_st1 = nAtomT1 / nsolute1;
+
+     WG_Mol_id = (struct Mol_identity *)malloc( num_mol_cluster_st1 * sizeof(struct Mol_identity) );
+     for(i=0; i < num_mol_cluster_st1; i++){  // keep record of the solute1 id
+       WG_Mol_id[i].solute_type = 1;
+       WG_Mol_id[i].solvent_type = 0;
+       WG_Mol_id[i].id = i+1;
+     }
+
+     atom_cluster_st1 = (double *)malloc( (num_mol_cluster_st1 * nsolute1 * 3) * sizeof(double));
+     for(i=0; i < num_mol_cluster_st1 * nsolute1 * 3; i++){
+       atom_cluster_st1[i] = atmT1[i];
+     }
+
+     if(nsolventtype >= 1 && index_wg_st1_sv1 == 1 && findsolvent(1, index_wg_st1_cluster, cluster_st1_sv_type) == 1)
+     {
+       if(nAtomS1 % nsolvent1 != 0){
+         printf("Error in coordinate file of solvent1\n");
+         exit(-1);
+       }
+
+       id_sv1 = 0;
+       for(i=0; i < index_wg_st1_cluster; i++){  
+         if(cluster_st1_sv_type[i] == 1){
+           id_sv1 = i;      // solvent1 is in line 'id_sv1' in [WEIGHTED GRAPH BY SOLUTE1 CLUSTER] parameters
+           break;
+         }
+       }
+
+       num_mol_cluster_sv1 = 0;
+
+       for(i=0; i < nAtomS1/nsolvent1; i++){
+         index_select_mol = 0;
+
+         for(j=0; j < num_mol_cluster_st1; j++){
+           temp_wg_site_dist = wg_site_distance(atmT1, j, nsolute1, cluster_st1_atom[id_sv1], atmS1, i, nsolvent1, cluster_st1_sv_atom[id_sv1], xside, yside, zside);
+           if(temp_wg_site_dist >= cluster_st1_sv_dist_min[id_sv1] && temp_wg_site_dist <= cluster_st1_sv_dist_max[id_sv1]){ // select solvent1 into graph cluster, based on distance to solute1
+             index_select_mol = 1;
+             break;
+           };
+         }
+
+         if(index_select_mol == 1){    // copy the coordinate of solvent1 molecule i to cluster
+           if(num_mol_cluster_sv1 == 0) {
+             atom_cluster_sv1 = (double *)malloc( (1 * nsolvent1 * 3) * sizeof(double));  // size of one solvent molecule
+           }
+           else {
+             atom_cluster_temp = (double *)realloc( atom_cluster_sv1 , ((num_mol_cluster_sv1 + 1) * nsolvent1 * 3) * sizeof(double)); // adjust the size by increasing one solvent molecule
+             if(atom_cluster_temp == NULL){
+               printf("Cannot allocate memory for coordinates of atom cluster in solvent1\n");
+               exit(-1);
+             }
+             else
+               atom_cluster_sv1 = atom_cluster_temp; 
+          }
+
+           for(j = i*nsolvent1*3; j < (i+1)*nsolvent1*3; j++){
+             atom_cluster_sv1[ j - (i-num_mol_cluster_sv1)*nsolvent1*3 ] = atmS1[j];
+           }
+
+           num_mol_cluster_sv1++;
+
+           temp_Mol_id = (struct Mol_identity *)realloc( WG_Mol_id, (num_mol_cluster_st1 + num_mol_cluster_sv1) * sizeof(struct Mol_identity) );  // adjust the size of WG_Mol_id
+           if(temp_Mol_id == NULL){
+             printf("Cannot allocate memory for molecule identity at solvent1\n");
+             exit(-1);
+           }
+           else {    // keep record of the solute1 id
+             WG_Mol_id = temp_Mol_id;    
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv1 - 1].solute_type = 0;
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv1 - 1].solvent_type = 1;
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv1 - 1].id = i;
+           }
+
+         } // this is the end of ' if(index_select_mol == 1) '
+
+       }  // this is the end of ' for(i=0; i < nAtomS1/nsolvent1; i++) '
+
+     } // this is the end of ' if(nsolventtype >= 1 && index_wg_st1_sv1 == 1 && findsolvent(1, index_wg_st1_cluster, cluster_st1_sv_type) == 1) 
+
+
+     if(nsolventtype >= 2 && index_wg_st1_sv2 == 1 && findsolvent(2, index_wg_st1_cluster, cluster_st1_sv_type) == 1)  // read the cluster for solvent2-solute1
+     {
+       if(nAtomS2 % nsolvent2 != 0){
+         printf("Error in coordinate file of solvent2\n");
+         exit(-1);
+       }
+
+       id_sv2 = 0;
+       for(i=0; i < index_wg_st1_cluster; i++){  
+         if(cluster_st1_sv_type[i] == 2){
+           id_sv2 = i;      // solvent2 is in line 'id_sv2' in [WEIGHTED GRAPH BY SOLUTE1 CLUSTER] parameters
+           break;
+         }
+       }
+
+       num_mol_cluster_sv2 = 0;
+
+       for(i=0; i < nAtomS2/nsolvent2; i++){
+         index_select_mol = 0;
+
+         for(j=0; j < num_mol_cluster_st1; j++){
+           temp_wg_site_dist = wg_site_distance(atmT1, j, nsolute1, cluster_st1_atom[id_sv2], atmS2, i, nsolvent2, cluster_st1_sv_atom[id_sv2], xside, yside, zside);
+           if(temp_wg_site_dist >= cluster_st1_sv_dist_min[id_sv2] && temp_wg_site_dist <= cluster_st1_sv_dist_max[id_sv2]){ // select solvent2 into graph cluster, based on distance to solute1
+             index_select_mol = 1;
+             break;
+           };
+         }
+
+         if(index_select_mol == 1){    // copy the coordinate of solvent2 molecule i to cluster
+           if(num_mol_cluster_sv2 == 0) {
+             atom_cluster_sv2 = (double *)malloc( (1 * nsolvent2 * 3) * sizeof(double));  // size of one solvent molecule
+           }
+           else {
+             atom_cluster_temp = (double *)realloc( atom_cluster_sv2 , ((num_mol_cluster_sv2 + 1) * nsolvent2 * 3) * sizeof(double)); // adjust the size by increasing one solvent molecule
+             if(atom_cluster_temp == NULL){
+               printf("Cannot allocate memory for coordinates of atom cluster in solvent2\n");
+               exit(-1);
+             }
+             else
+               atom_cluster_sv2 = atom_cluster_temp; 
+          }
+
+           for(j = i*nsolvent2*3; j < (i+1)*nsolvent2*3; j++){
+             atom_cluster_sv2[ j - (i-num_mol_cluster_sv2)*nsolvent2*3 ] = atmS2[j];
+           }
+
+           num_mol_cluster_sv2++;
+
+           temp_Mol_id = (struct Mol_identity *)realloc( WG_Mol_id, (num_mol_cluster_st1 + num_mol_cluster_sv2) * sizeof(struct Mol_identity) );  // adjust the size of WG_Mol_id
+           if(temp_Mol_id == NULL){
+             printf("Cannot allocate memory for molecule identity at solvent2\n");
+             exit(-1);
+           }
+           else {    // keep record of the solute2 id
+             WG_Mol_id = temp_Mol_id;    
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv2 - 1].solute_type = 0;
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv2 - 1].solvent_type = 2;  // it is solvent 2
+             WG_Mol_id[num_mol_cluster_st1 + num_mol_cluster_sv2 - 1].id = i;
+           }
+
+         } // this is the end of ' if(index_select_mol == 1) '
+
+       }  // this is the end of ' for(i=0; i < nAtomS2/nsolvent2; i++) '
+
+     } // this is the end of ' if(nsolventtype >= 2 && index_wg_st1_sv2 == 1 && findsolvent(2, index_wg_st1_cluster, cluster_st1_sv_type) == 1) 
+
+
+
+    /* allocate the Adjacency matrix for weighted graph */
+    WG_Adj = (double **)malloc( (num_mol_cluster_st1 + num_mol_cluster_sv1 + num_mol_cluster_sv2) * sizeof(double *) ); 
+    for(i=0; i< num_mol_cluster_st1 + num_mol_cluster_sv1 + num_mol_cluster_sv2; i++) {
+      WG_Adj[i] = (double *)calloc( num_mol_cluster_st1 + num_mol_cluster_sv1 + num_mol_cluster_sv2, sizeof(double) );
+    }
+
+    /* create the weighted graph, based on the selected cluster from solute1, solvent1, solvent2 coordinates */
+    
+    
+
+  } // this is the end of ' if(index_wg_st1_cluster == 1) '
+
+
+
+  /* free the memory allocated in this section for weighted graph */
+  free(atom_cluster_st1);
+  free(atom_cluster_sv1);
+  free(atom_cluster_sv2);
+  free(atom_cluster_temp);
+  free(WG_Mol_id);
+  free(temp_Mol_id);
+  for(i=0; i< num_mol_cluster_st1 + num_mol_cluster_sv1 + num_mol_cluster_sv2; i++){
+    free(WG_Adj[i]);
+  }
+  free(WG_Adj[i]);
+  
+  fclose(output_weighted_graph);  
+
+}
+
 
 
 

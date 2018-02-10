@@ -18,6 +18,12 @@
 
 #define FLN 256
 
+struct Mol_identity {   // this is to indicate, whether it is a solute or solvent, and what is its id-number, e.g. the 2nd molecule of solute1 will be kept {solute_type=1, solvent_type=0, id=2}
+  int solute_type;
+  int solvent_type;
+  int id;
+};
+
 namespace CN_NS {
   
   class ChemNetworkOrig : public ChemNetwork {
@@ -486,6 +492,35 @@ namespace CN_NS {
     int *shellist, *edgbd_idx;
     double **shelldistmtx, **edgebds;
    // double varyMin, varyMax;
+
+
+	// here I'm adding parameters for weighted graphs, 'wg' is short for weighted-graph, 'st1': solute1, 'sv': solvent
+	int index_weighted_graph;
+	int index_wg_st1_cluster, wg_solute_type, wg_solvent_type; 
+	int cluster_st1_sv_type[NUM_INTER], cluster_st1_atom[NUM_INTER], cluster_st1_sv_atom[NUM_INTER];
+	double cluster_st1_sv_dist_min[NUM_INTER], cluster_st1_sv_dist_max[NUM_INTER];
+	int index_wg_st1_sv1, index_wg_st1_sv2, num_wg_st1_sv1_dist, num_wg_st1_sv2_dist;
+        int atom1_wg_st1_sv1[NUM_INTER], atom2_wg_st1_sv1[NUM_INTER], atom1_wg_st1_sv2[NUM_INTER], atom2_wg_st1_sv2[NUM_INTER];
+	int funct_type_wg_st1_sv1, funct_type_wg_st1_sv2;
+	double funct_par1_wg_st1_sv1, funct_par2_wg_st1_sv1, funct_par1_wg_st1_sv2, funct_par2_wg_st1_sv2;
+	int index_wg_sv1_sv1, index_wg_sv2_sv2, index_wg_sv1_sv2, num_wg_sv1_sv1_dist, num_wg_sv2_sv2_dist, num_wg_sv1_sv2_dist;
+        int atom1_wg_sv1_sv1[NUM_INTER], atom2_wg_sv1_sv1[NUM_INTER], atom1_wg_sv2_sv2[NUM_INTER], atom2_wg_sv2_sv2[NUM_INTER], atom1_wg_sv1_sv2[NUM_INTER], atom2_wg_sv1_sv2[NUM_INTER];
+	int funct_type_wg_sv1_sv1, funct_type_wg_sv2_sv2, funct_type_wg_sv1_sv2;
+	double funct_par1_wg_sv1_sv1, funct_par2_wg_sv1_sv1, funct_par1_wg_sv2_sv2, funct_par2_wg_sv2_sv2, funct_par1_wg_sv1_sv2, funct_par2_wg_sv1_sv2;
+	double *atom_cluster_st1, *atom_cluster_sv1, *atom_cluster_sv2, *atom_cluster_temp;
+	int num_mol_cluster_st1, num_mol_cluster_sv1, num_mol_cluster_sv2;
+	int index_select_mol;
+        int id_sv1, id_sv2;
+        double temp_wg_site_dist;
+	double **WG_Adj;  // the adjacency matrix of weighted graph
+	struct Mol_identity *WG_Mol_id, *temp_Mol_id;
+
+	int findsolvent(int id_solvent_type, int number, int array[NUM_INTER]);  // return 1 if id_solvent_type is within array[], otherwise 0, see 'util_orig.cpp'
+	double wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside);  // calculate the distance between two sites from two molecules, considering pbc, see 'util_orig.cpp'
+
+	// here I'm adding file point for weighted graph
+	FILE *output_weighted_graph;
+	char foutput_weighted_graph[FLN];
 
     
   };

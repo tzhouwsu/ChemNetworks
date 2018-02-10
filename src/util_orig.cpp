@@ -15,10 +15,88 @@
 #include <math.h>
 
 #include "chemnetworks_orig.h"
+#include "common.h"
 
 #define PI 3.14159265
 
 using namespace CN_NS;
+
+double ChemNetworkOrig::wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside)
+{
+  double wg_distance = 0.0;
+  double site1x, site1y, site1z, site2x, site2y, site2z;
+  double minx, miny, minz;
+
+  site1x = atomM1[ (idmolM1 * natmM1 + (idatmM1-1)) * 3 ];
+  site1y = atomM1[ (idmolM1 * natmM1 + (idatmM1-1)) * 3 + 1 ];
+  site1z = atomM1[ (idmolM1 * natmM1 + (idatmM1-1)) * 3 + 2 ];
+
+  site2x = atomM2[ (idmolM2 * natmM2 + (idatmM2-1)) * 3 ];
+  site2y = atomM2[ (idmolM2 * natmM2 + (idatmM2-1)) * 3 + 1 ];
+  site2z = atomM2[ (idmolM2 * natmM2 + (idatmM2-1)) * 3 + 2 ];
+  
+  minx = site1x - site2x;
+  miny = site1y - site2y;
+  minz = site1z - site2z;
+
+  if(minx > xside*0.5){   // minx is the shortest distance in x-direction, considering pbc
+    while(fabs(minx) > xside*0.5){   // if the atom sites are separated by more than 1 pbc-unit, this may happen in CP2K output-file
+      minx = minx - xside;
+    }
+  }
+  else if(minx < -xside*0.5){
+    while(fabs(minx) > xside*0.5){
+      minx = minx + xside;
+    }
+  }
+
+  if(miny > yside*0.5){
+    while(fabs(miny) > yside*0.5){
+      miny = miny - yside;
+    }
+  }
+  else if(miny < -yside*0.5){
+    while(fabs(miny) > yside*0.5){
+      miny = miny + yside;
+    }
+  }
+
+  if(minz > zside*0.5){
+    while(fabs(minz) > zside*0.5){
+      minz = minz - zside;
+    }
+  }
+  else if(minz < -zside*0.5){
+    while(fabs(minz) > zside*0.5){
+      minz = minz + zside;
+    }
+  }
+
+  wg_distance = sqrt( minx * minx + miny * miny + minz * minz);
+
+  return(wg_distance);
+}
+
+int ChemNetworkOrig::findsolvent(int id_solvent_type, int number, int array[NUM_INTER]){
+  int result = 0;
+  int i;
+
+  if(number > NUM_INTER){
+    printf("Error: size-overflow in function 'findsolvent'\n");
+    result = -1;
+  }
+  else {
+    for(i=0; i<number; i++){
+      if(id_solvent_type == array[i]){
+        result = 1;
+        break;
+      }
+    }
+  }
+
+  return(result);
+}
+
 
 int ChemNetworkOrig::findf(FILE *fd, int n, ...){
  
