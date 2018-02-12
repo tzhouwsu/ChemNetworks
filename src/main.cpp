@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     fprintf(stdout,"Launching ChemNetworkNew\n");
     
     cn = new ChemNetworkNew();
-    
+
     // read command-line and input file
     
     cn->input_read(argc, argv);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
   } else {
     cn = new ChemNetworkOrig();
-    
+
     // read command-line and input file
     
     cn->input_read(argc, argv);
@@ -61,6 +61,6 @@ int main(int argc, char *argv[])
     
     cn->input_process(argc, argv);
   }
-  
+
   delete cn;
 }

@@ -27,6 +27,7 @@ struct Mol_identity {   // this is to indicate, whether it is a solute or solven
 namespace CN_NS {
   
   class ChemNetworkOrig : public ChemNetwork {
+
   public : 
     ChemNetworkOrig();
     ~ChemNetworkOrig() {};
@@ -494,7 +495,15 @@ namespace CN_NS {
    // double varyMin, varyMax;
 
 
-	// here I'm adding parameters for weighted graphs, 'wg' is short for weighted-graph, 'st1': solute1, 'sv': solvent
+  class ChemNetwork_Weighted_Graph {   // here is a nested class for weighted graph
+
+      public:
+	ChemNetwork_Weighted_Graph();
+	~ChemNetwork_Weighted_Graph();
+
+	/* here I'm adding parameters for weighted graphs, it is public to the outer-class of 'ChemNetworkOrig' */ 
+        /* note 'wg' is short for weighted-graph, 'st1': solute1, 'sv': solvent */
+	int wgi;
 	int index_weighted_graph;
 	int index_wg_st1_cluster, wg_solute_type, wg_solvent_type; 
 	int cluster_st1_sv_type[NUM_INTER], cluster_st1_atom[NUM_INTER], cluster_st1_sv_atom[NUM_INTER];
@@ -512,18 +521,38 @@ namespace CN_NS {
 	int index_select_mol;
         int id_sv1, id_sv2;
         double temp_wg_site_dist;
+	int total_num_nodes;
 	double **WG_Adj;  // the adjacency matrix of weighted graph
 	struct Mol_identity *WG_Mol_id, *temp_Mol_id;
-
-	int findsolvent(int id_solvent_type, int number, int array[NUM_INTER]);  // return 1 if id_solvent_type is within array[], otherwise 0, see 'util_orig.cpp'
-	double wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside);  // calculate the distance between two sites from two molecules, considering pbc, see 'util_orig.cpp'
+	int index_create_Adj;
 
 	// here I'm adding file point for weighted graph
 	FILE *output_weighted_graph;
 	char foutput_weighted_graph[FLN];
 
+	int findsolvent(int id_solvent_type, int number, int array[NUM_INTER]);  // return 1 if id_solvent_type is within array[], otherwise 0, see 'util_orig.cpp'
+	double wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside);  // calculate the distance between two sites from two molecules, considering pbc, see 'util_orig.cpp'
+
+
+	int create_WG_Adj_from_cluster(FILE *output_weighted_graph, double **WG_Adj, struct Mol_identity *WG_Mol_id,
+                                       double *atom_cluster_st1, int num_mol_cluster_st1, int nsolute1, 
+                                       double *atom_cluster_sv1, int num_mol_cluster_sv1, int nsolvent1, 
+                                       double *atom_cluster_sv2, int num_mol_cluster_sv2, int nsolvent2,
+                                       int index_wg_st1_sv1, int num_wg_st1_sv1, int atom1_wg_st1_sv1[NUM_INTER], int atom2_wg_st1_sv1[NUM_INTER], int funct_type_wg_st1_sv1, double funct_par1_wg_st1_sv1, double funct_par2_wg_st1_sv1,
+                                       int index_wg_st1_sv2, int num_wg_st1_sv2, int atom1_wg_st1_sv2[NUM_INTER], int atom2_wg_st1_sv2[NUM_INTER], int funct_type_wg_st1_sv2, double funct_par1_wg_st1_sv2, double funct_par2_wg_st1_sv2,
+                                       int index_wg_sv1_sv1, int num_wg_sv1_sv1, int atom1_wg_sv1_sv1[NUM_INTER], int atom2_wg_sv1_sv1[NUM_INTER], int funct_type_wg_sv1_sv1, double funct_par1_wg_sv1_sv1, double funct_par2_wg_sv1_sv1,
+                                       int index_wg_sv2_sv2, int num_wg_sv2_sv2, int atom1_wg_sv2_sv2[NUM_INTER], int atom2_wg_sv2_sv2[NUM_INTER], int funct_type_wg_sv2_sv2, double funct_par1_wg_sv2_sv2, double funct_par2_wg_sv2_sv2,
+                                       int index_wg_sv1_sv2, int num_wg_sv1_sv2, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2);
+
+  }; // this is the end of class 'ChemNetwork_Weighted_Graph'
+
+
+      ChemNetwork_Weighted_Graph cnwg;    // cnwg is a class of 'ChemNetwork_Weighted_Graph' defining all the parameters for weighted graph
+
     
-  };
+  }; // this is the end of class 'ChemNetworkOrig'
+
+
 }
     
 #endif // CHEMNETWORKS_ORIG_H
