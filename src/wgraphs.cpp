@@ -17,7 +17,7 @@
 using namespace CN_NS;
 
 ChemNetworkOrig::ChemNetwork_Weighted_Graph::ChemNetwork_Weighted_Graph(){   // constructor for weighted graph
-  index_weighted_graph = 0; // setting the default values
+  index_weighted_graph = 0; // setting the default values here
   index_wg_st1_cluster = 0;
   for(wgi=0; wgi<NUM_INTER; wgi++)
   {
@@ -39,7 +39,9 @@ ChemNetworkOrig::ChemNetwork_Weighted_Graph::ChemNetwork_Weighted_Graph(){   // 
 
 ChemNetworkOrig::ChemNetwork_Weighted_Graph::~ChemNetwork_Weighted_Graph(){}; // destructor for weighted graph
 
-/* this is a function to create the Adjacency matrix of weighted graph based on the coordinates from cluster coordinates */
+
+
+/* this is a function to create the Adjacency matrix of weighted graph based on the coordinates from selected cluster */
 int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE *output_weighted_graph, double **WG_Adj, struct Mol_identity *WG_Mol_id,
 	double *atom_cluster_st1, int num_mol_cluster_st1, int nsolute1,
 	double *atom_cluster_sv1, int num_mol_cluster_sv1, int nsolvent1,
@@ -48,10 +50,10 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
 	int index_wg_st1_sv2, int num_wg_st1_sv2_dist, int atom1_wg_st1_sv2[NUM_INTER], int atom2_wg_st1_sv2[NUM_INTER], int funct_type_wg_st1_sv2, double funct_par1_wg_st1_sv2, double funct_par2_wg_st1_sv2,
 	int index_wg_sv1_sv1, int num_wg_sv1_sv1_dist, int atom1_wg_sv1_sv1[NUM_INTER], int atom2_wg_sv1_sv1[NUM_INTER], int funct_type_wg_sv1_sv1, double funct_par1_wg_sv1_sv1, double funct_par2_wg_sv1_sv1,
 	int index_wg_sv2_sv2, int num_wg_sv2_sv2_dist, int atom1_wg_sv2_sv2[NUM_INTER], int atom2_wg_sv2_sv2[NUM_INTER], int funct_type_wg_sv2_sv2, double funct_par1_wg_sv2_sv2, double funct_par2_wg_sv2_sv2,
-	int index_wg_sv1_sv2, int num_wg_sv1_sv2_dist, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2
+	int index_wg_sv1_sv2, int num_wg_sv1_sv2_dist, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2,
         double xside, double yside, double zside){
 
-  int nodei, nodej, atomi, atomj, typei, typej, indexi, indexj, totalnumi, iter;
+  int nodei, nodej, atomi, atomj, typei, typej, indexi, indexj, totalnum, iter;
   double sitei_x,sitei_y, sitei_z, sitej_x, sitej_y, sitej_z;
   double dist_ij, weight_ij;
 
@@ -99,9 +101,9 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
                 indexi = nodei;
                 indexj = nodej - num_mol_cluster_st1;
 
-                dist_ij = wg_site_distance(atom_cluster_st1, indexi, nsolute1, atom1_wg_st1_sv1[iter], atom_cluster_sv1, indexj, nsolvent1, atom2_wg_st1_sv1[iter]);
+                dist_ij = wg_site_distance(atom_cluster_st1, indexi, nsolute1, atom1_wg_st1_sv1[iter], atom_cluster_sv1, indexj, nsolvent1, atom2_wg_st1_sv1[iter], xside, yside, zside);
                 if(funct_type_wg_st1_sv1 == 1)
-                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv1 * (dist_ij - funct_par2_wg_st1_sv1) ) );  // fermi-function, sigmoid-type
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv1 * (dist_ij - funct_par2_wg_st1_sv1) / funct_par2_wg_st1_sv1 ) );  // fermi-function, sigmoid-type
                 else {                                                                                                      /* add other functional formulisms here */
                   printf("warning in solute1-solvent1 edge: weight-function-type %d is not implemented\n",funct_type_wg_st1_sv1);
                   weight_ij = 0.0;
@@ -124,9 +126,9 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
                 indexi = nodei;
                 indexj = nodej - num_mol_cluster_st1 - num_mol_cluster_sv1;
 
-                dist_ij = wg_site_distance(atom_cluster_st1, indexi, nsolute1, atom1_wg_st1_sv1[iter], atom_cluster_sv2, indexj, nsolvent2, atom2_wg_st1_sv2[iter]);
+                dist_ij = wg_site_distance(atom_cluster_st1, indexi, nsolute1, atom1_wg_st1_sv1[iter], atom_cluster_sv2, indexj, nsolvent2, atom2_wg_st1_sv2[iter], xside, yside, zside);
                 if(funct_type_wg_st1_sv2 == 1)
-                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv2 * (dist_ij - funct_par2_wg_st1_sv2) ) );
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv2 * (dist_ij - funct_par2_wg_st1_sv2) / funct_par2_wg_st1_sv2 ) );
                 else {
                   printf("warning in solute1-solvent2 edge: weight-function-type %d is not implemented\n",funct_type_wg_st1_sv2);
                   weight_ij = 0.0;
@@ -145,15 +147,15 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
           {
             if(index_wg_st1_sv1 == 1)
             {
-              WG_Adj[nodei][nodej] = 0.0;
+              weight_ij = 0.0;
               for(iter=0; iter < num_wg_st1_sv1_dist; iter++)
               {
                 indexi = nodei - num_mol_cluster_st1;
                 indexj = nodej;
 
-                dist_ij = wg_site_distance(atom_cluster_sv1, indexi, nsolvent1, atom2_wg_st1_sv1[iter], atom_cluster_st1, indexj, nsolute1, atom1_wg_st1_sv1[iter]);
+                dist_ij = wg_site_distance(atom_cluster_sv1, indexi, nsolvent1, atom2_wg_st1_sv1[iter], atom_cluster_st1, indexj, nsolute1, atom1_wg_st1_sv1[iter], xside, yside, zside);
                 if(funct_type_wg_st1_sv1 == 1)
-                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv1 * (dist_ij - funct_par2_wg_st1_sv1) ) );
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv1 * (dist_ij - funct_par2_wg_st1_sv1) / funct_par2_wg_st1_sv1 ) );
                 else {
                   printf("warning in solute1-solvent1 edge: weight-function-type %d is not implemented\n", funct_type_wg_st1_sv1);
                   weight_ij = 0.0;
@@ -174,9 +176,9 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
                 indexi = nodei - num_mol_cluster_st1;
                 indexj = nodej - num_mol_cluster_st1;
 
-                dist_ij = wg_site_distance(atom_cluster_sv1, indexi, nsolvent1, atom1_wg_sv1_sv1[iter], atom_cluster_sv1, indexj, nsolvent1, atom2_wg_sv1_sv1[iter]);
+                dist_ij = wg_site_distance(atom_cluster_sv1, indexi, nsolvent1, atom1_wg_sv1_sv1[iter], atom_cluster_sv1, indexj, nsolvent1, atom2_wg_sv1_sv1[iter], xside, yside, zside);
                 if(funct_type_wg_sv1_sv1 == 1)
-                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_sv1_sv1 * (dist_ij - funct_par2_wg_sv1_sv1) ) );
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_sv1_sv1 * (dist_ij - funct_par2_wg_sv1_sv1) / funct_par2_wg_sv1_sv1 ) );
                 else {
                   printf("warning in solvent1-solvent1 edge: weight-function-type %d is not implemented\n", funct_type_wg_sv1_sv1);
                   weight_ij = 0.0;
@@ -189,15 +191,102 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
           }
           else if(typej == 3)
           {
+            if(index_wg_sv1_sv2 == 1) // this is solvent1 - solvent2 interaction
+            {
+              weight_ij = 0.0;
+              for(iter=0; iter < num_wg_sv1_sv1_dist; iter++)
+              {
+                indexi = nodei - num_mol_cluster_st1;
+                indexj = nodej - num_mol_cluster_st1 - num_mol_cluster_sv1;
+
+                dist_ij = wg_site_distance(atom_cluster_sv1, indexi, nsolvent1, atom1_wg_sv1_sv1[iter], atom_cluster_sv2, indexj, nsolvent2, atom2_wg_sv1_sv1[iter], xside, yside, zside);
+                if(funct_type_wg_sv1_sv2 == 1)
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_sv1_sv2 * (dist_ij - funct_par2_wg_sv1_sv2) / funct_par2_wg_sv1_sv2 ) );
+                else {
+                  printf("warning in solvent1-solvent2 edge: weight-function-type %d is not implemented\n", funct_type_wg_sv1_sv2);
+                  weight_ij = 0.0;
+                }
+              }
+              WG_Adj[nodei][nodej] = weight_ij;
+            }
+            else
+              WG_Adj[nodei][nodej] = 0.0;
           }
 
         }
         else if (typei == 3)
         {
+          if(typej == 1)
+          {
+            if(index_wg_st1_sv2 == 1)
+            {
+              weight_ij = 0.0;
+              for(iter=0; iter < num_wg_st1_sv2_dist; iter++)
+              {
+                indexi = nodei - num_mol_cluster_st1 - num_mol_cluster_sv1;
+                indexj = nodej;
 
+                dist_ij = wg_site_distance(atom_cluster_sv2, indexi, nsolvent2, atom2_wg_st1_sv2[iter], atom_cluster_st1, indexj, nsolute1, atom1_wg_st1_sv2[iter], xside, yside, zside);
+                if(funct_type_wg_st1_sv2 == 1)
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_st1_sv2 * (dist_ij - funct_par2_wg_st1_sv2) / funct_par2_wg_st1_sv2 ) );
+                else {
+                  printf("warning in solute1-solvent2 edge: weight-function-type %d is not implemented\n", funct_type_wg_st1_sv2);
+                  weight_ij = 0.0;
+                }
+              }
+              WG_Adj[nodei][nodej] = weight_ij;
+            }
+            else
+              WG_Adj[nodei][nodej] = 0.0;
+          }
+          else if(typej == 2)
+          {
+            if(index_wg_sv1_sv2 == 1)
+            {
+              weight_ij = 0.0;
+              for(iter=0; iter < num_wg_sv1_sv2_dist; iter++)
+              {
+                indexi = nodei - num_mol_cluster_st1 - num_mol_cluster_sv1;
+                indexj = nodej - num_mol_cluster_st1;
 
-        } 
+                dist_ij = wg_site_distance(atom_cluster_sv2, indexi, nsolvent2, atom2_wg_sv1_sv2[iter], atom_cluster_sv1, indexj, nsolvent1, atom1_wg_sv1_sv2[iter], xside, yside, zside);
+                if(funct_type_wg_sv1_sv2 == 1)
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_sv1_sv2 * (dist_ij - funct_par2_wg_sv1_sv2) / funct_par2_wg_sv1_sv2 ) );
+                else {
+                  printf("warning in solvent1-solvent2 edge: weight-function-type %d is not implemented\n", funct_type_wg_sv1_sv2);
+                  weight_ij = 0.0;
+                }
+              }
+              WG_Adj[nodei][nodej] = weight_ij;
+            }
+            else
+              WG_Adj[nodei][nodej] = 0.0;
+          }
+          else if(typej == 3)
+          {
+            if(index_wg_sv2_sv2 == 1)
+            {
+              weight_ij = 0.0;
+              for(iter=0; iter < num_wg_sv2_sv2_dist; iter++)
+              {
+                indexi = nodei - num_mol_cluster_st1 - num_mol_cluster_sv1;
+                indexj = nodej - num_mol_cluster_st1 - num_mol_cluster_sv1;
 
+                dist_ij = wg_site_distance(atom_cluster_sv2, indexi, nsolvent2, atom1_wg_sv2_sv2[iter], atom_cluster_sv2, indexj, nsolvent2, atom2_wg_sv2_sv2[iter], xside, yside, zside);
+                if(funct_type_wg_sv2_sv2 == 1)
+                  weight_ij = weight_ij + 1.0 / (1.0 + exp( funct_par1_wg_sv2_sv2 * (dist_ij - funct_par2_wg_sv2_sv2) / funct_par2_wg_sv2_sv2 ) );
+                else {
+                  printf("warning in solvent2-solvent2 edge: weight-function-type %d is not implemented\n", funct_type_wg_sv2_sv2);
+                  weight_ij = 0.0;
+                }
+              }
+              WG_Adj[nodei][nodej] = weight_ij;
+            }
+            else
+              WG_Adj[nodei][nodej] = 0.0;
+          }
+
+        }  // end of ' if(typei == 1) else if == 2 else if == 3 '
 
       } // end of ' if(nodej == nodei) else '
 
@@ -205,8 +294,36 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
   } // end of ' for(nodei = 0; nodei < totalnum; nodei++) '
   
 
+  /* print out the Adjacency matrix to an output-file */
+  for(nodei=0; nodei < totalnum; nodei++)
+  {
+    for(nodej=0; nodej < totalnum; nodej++)
+    {
+      if(WG_Adj[nodei][nodej] > 0.0) // only print the non-zero weights
+      {
+        if(WG_Mol_id[nodei].solute_type == 1)
+        {
+          if(WG_Mol_id[nodej].solute_type == 1)
+            fprintf(output_weighted_graph, "%d ( st%d %d ) - %d ( st%d %d ) edge-weight: %lf \n", nodei, WG_Mol_id[nodei].solute_type, WG_Mol_id[nodei].id, nodej, WG_Mol_id[nodej].solute_type, WG_Mol_id[nodej].id, WG_Adj[nodei][nodej]);
+          else if(WG_Mol_id[nodej].solute_type == 0)
+            fprintf(output_weighted_graph, "%d ( st%d %d ) - %d ( sv%d %d ) edge-weight: %lf \n", nodei, WG_Mol_id[nodei].solute_type, WG_Mol_id[nodei].id, nodej, WG_Mol_id[nodej].solvent_type, WG_Mol_id[nodej].id, WG_Adj[nodei][nodej]);
+
+        }
+        else if(WG_Mol_id[nodei].solute_type == 0)
+        {
+          if(WG_Mol_id[nodej].solute_type == 1)
+            fprintf(output_weighted_graph, "%d ( sv%d %d ) - %d ( st%d %d ) edge-weight: %lf \n", nodei, WG_Mol_id[nodei].solvent_type, WG_Mol_id[nodei].id, nodej, WG_Mol_id[nodej].solute_type, WG_Mol_id[nodej].id, WG_Adj[nodei][nodej]);
+          else if(WG_Mol_id[nodej].solute_type == 0)
+            fprintf(output_weighted_graph, "%d ( sv%d %d ) - %d ( sv%d %d ) edge-weight: %lf \n", nodei, WG_Mol_id[nodei].solvent_type, WG_Mol_id[nodei].id, nodej, WG_Mol_id[nodej].solvent_type, WG_Mol_id[nodej].id, WG_Adj[nodei][nodej]);
+
+        }
+      }
+
+    }
+  }
 
 
+/*   below are used in debug
   fprintf(output_weighted_graph,"%d %d\n",num_mol_cluster_st1,nsolute1);
   fprintf(output_weighted_graph,"%d %d\n",num_mol_cluster_sv1,nsolvent1);
   fprintf(output_weighted_graph,"%d %d\n",num_mol_cluster_sv2,nsolvent2);
@@ -216,8 +333,7 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
   fprintf(output_weighted_graph,"%d %d %d %lf %lf\n",index_wg_sv1_sv1,num_wg_sv1_sv1,funct_type_wg_sv1_sv1,funct_par1_wg_sv1_sv1,funct_par2_wg_sv1_sv1);
   fprintf(output_weighted_graph,"%d %d %d %lf %lf\n",index_wg_sv2_sv2,num_wg_sv2_sv2,funct_type_wg_sv2_sv2,funct_par1_wg_sv2_sv2,funct_par2_wg_sv2_sv2);
   fprintf(output_weighted_graph,"%d %d %d %lf %lf\n",index_wg_sv1_sv2,num_wg_sv1_sv2,funct_type_wg_sv1_sv2,funct_par1_wg_sv1_sv2,funct_par2_wg_sv1_sv2);
-
-
+*/
 
   return(0);
 };
