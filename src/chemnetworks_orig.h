@@ -538,11 +538,12 @@ namespace CN_NS {
                                        double *atom_cluster_st1, int num_mol_cluster_st1, int nsolute1, 
                                        double *atom_cluster_sv1, int num_mol_cluster_sv1, int nsolvent1, 
                                        double *atom_cluster_sv2, int num_mol_cluster_sv2, int nsolvent2,
-                                       int index_wg_st1_sv1, int num_wg_st1_sv1, int atom1_wg_st1_sv1[NUM_INTER], int atom2_wg_st1_sv1[NUM_INTER], int funct_type_wg_st1_sv1, double funct_par1_wg_st1_sv1, double funct_par2_wg_st1_sv1,
-                                       int index_wg_st1_sv2, int num_wg_st1_sv2, int atom1_wg_st1_sv2[NUM_INTER], int atom2_wg_st1_sv2[NUM_INTER], int funct_type_wg_st1_sv2, double funct_par1_wg_st1_sv2, double funct_par2_wg_st1_sv2,
-                                       int index_wg_sv1_sv1, int num_wg_sv1_sv1, int atom1_wg_sv1_sv1[NUM_INTER], int atom2_wg_sv1_sv1[NUM_INTER], int funct_type_wg_sv1_sv1, double funct_par1_wg_sv1_sv1, double funct_par2_wg_sv1_sv1,
-                                       int index_wg_sv2_sv2, int num_wg_sv2_sv2, int atom1_wg_sv2_sv2[NUM_INTER], int atom2_wg_sv2_sv2[NUM_INTER], int funct_type_wg_sv2_sv2, double funct_par1_wg_sv2_sv2, double funct_par2_wg_sv2_sv2,
-                                       int index_wg_sv1_sv2, int num_wg_sv1_sv2, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2);
+                                       int index_wg_st1_sv1, int num_wg_st1_sv1_dist, int atom1_wg_st1_sv1[NUM_INTER], int atom2_wg_st1_sv1[NUM_INTER], int funct_type_wg_st1_sv1, double funct_par1_wg_st1_sv1, double funct_par2_wg_st1_sv1,
+                                       int index_wg_st1_sv2, int num_wg_st1_sv2_dist, int atom1_wg_st1_sv2[NUM_INTER], int atom2_wg_st1_sv2[NUM_INTER], int funct_type_wg_st1_sv2, double funct_par1_wg_st1_sv2, double funct_par2_wg_st1_sv2,
+                                       int index_wg_sv1_sv1, int num_wg_sv1_sv1_dist, int atom1_wg_sv1_sv1[NUM_INTER], int atom2_wg_sv1_sv1[NUM_INTER], int funct_type_wg_sv1_sv1, double funct_par1_wg_sv1_sv1, double funct_par2_wg_sv1_sv1,
+                                       int index_wg_sv2_sv2, int num_wg_sv2_sv2_dist, int atom1_wg_sv2_sv2[NUM_INTER], int atom2_wg_sv2_sv2[NUM_INTER], int funct_type_wg_sv2_sv2, double funct_par1_wg_sv2_sv2, double funct_par2_wg_sv2_sv2,
+                                       int index_wg_sv1_sv2, int num_wg_sv1_sv2_dist, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2,
+                                       double xside, double yside, double zside);
 
   }; // this is the end of class 'ChemNetwork_Weighted_Graph'
 

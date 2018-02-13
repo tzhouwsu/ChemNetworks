@@ -2716,7 +2716,7 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
              cnwg.WG_Mol_id = cnwg.temp_Mol_id;    
              cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 - 1].solute_type = 0;
              cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 - 1].solvent_type = 1;
-             cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 - 1].id = i;
+             cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 - 1].id = i+1;     // id of that molecule is 1 to num_of_that_molecule
            }
 
          } // this is the end of ' if(cnwg.index_select_mol == 1) '
@@ -2783,7 +2783,7 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
              cnwg.WG_Mol_id = cnwg.temp_Mol_id;    
              cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2 - 1].solute_type = 0;
              cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2 - 1].solvent_type = 2;  // it is solvent 2
-             cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2 - 1].id = i;
+             cnwg.WG_Mol_id[cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2 - 1].id = i+1;
            }
 
          } // this is the end of ' if(cnwg.index_select_mol == 1) '
@@ -2807,7 +2807,8 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
                               cnwg.index_wg_st1_sv2, cnwg.num_wg_st1_sv2_dist, cnwg.atom1_wg_st1_sv2, cnwg.atom2_wg_st1_sv2, cnwg.funct_type_wg_st1_sv2, cnwg.funct_par1_wg_st1_sv2, cnwg.funct_par2_wg_st1_sv2, 
                               cnwg.index_wg_sv1_sv1, cnwg.num_wg_sv1_sv1_dist, cnwg.atom1_wg_sv1_sv1, cnwg.atom2_wg_sv1_sv1, cnwg.funct_type_wg_sv1_sv1, cnwg.funct_par1_wg_sv1_sv1, cnwg.funct_par2_wg_sv1_sv1,
                               cnwg.index_wg_sv2_sv2, cnwg.num_wg_sv2_sv2_dist, cnwg.atom1_wg_sv2_sv2, cnwg.atom2_wg_sv2_sv2, cnwg.funct_type_wg_sv2_sv2, cnwg.funct_par1_wg_sv2_sv2, cnwg.funct_par2_wg_sv2_sv2,
-                              cnwg.index_wg_sv1_sv2, cnwg.num_wg_sv1_sv2_dist, cnwg.atom1_wg_sv1_sv2, cnwg.atom2_wg_sv1_sv2, cnwg.funct_type_wg_sv1_sv2, cnwg.funct_par1_wg_sv1_sv2, cnwg.funct_par2_wg_sv1_sv2);
+                              cnwg.index_wg_sv1_sv2, cnwg.num_wg_sv1_sv2_dist, cnwg.atom1_wg_sv1_sv2, cnwg.atom2_wg_sv1_sv2, cnwg.funct_type_wg_sv1_sv2, cnwg.funct_par1_wg_sv1_sv2, cnwg.funct_par2_wg_sv1_sv2,
+                              xside, yside, zside);
 
     
     
