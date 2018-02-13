@@ -533,7 +533,6 @@ namespace CN_NS {
 	int findsolvent(int id_solvent_type, int number, int array[NUM_INTER]);  // return 1 if id_solvent_type is within array[], otherwise 0, see 'util_orig.cpp'
 	double wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside);  // calculate the distance between two sites from two molecules, considering pbc, see 'util_orig.cpp'
 
-
 	int create_WG_Adj_from_cluster(FILE *output_weighted_graph, double **WG_Adj, struct Mol_identity *WG_Mol_id,
                                        double *atom_cluster_st1, int num_mol_cluster_st1, int nsolute1, 
                                        double *atom_cluster_sv1, int num_mol_cluster_sv1, int nsolvent1, 
@@ -544,6 +543,18 @@ namespace CN_NS {
                                        int index_wg_sv2_sv2, int num_wg_sv2_sv2_dist, int atom1_wg_sv2_sv2[NUM_INTER], int atom2_wg_sv2_sv2[NUM_INTER], int funct_type_wg_sv2_sv2, double funct_par1_wg_sv2_sv2, double funct_par2_wg_sv2_sv2,
                                        int index_wg_sv1_sv2, int num_wg_sv1_sv2_dist, int atom1_wg_sv1_sv2[NUM_INTER], int atom2_wg_sv1_sv2[NUM_INTER], int funct_type_wg_sv1_sv2, double funct_par1_wg_sv1_sv2, double funct_par2_wg_sv1_sv2,
                                        double xside, double yside, double zside);
+
+
+
+
+	/* below are some parameters for pagerank calculation on weighted graph */
+	int index_PR_wg;
+	double PR_damping_factor;
+	int index_PR_wg_force, num_PR_wg_force_bias;
+	int PR_wg_bias_target_id[NUM_INTER];   // this is to record the id of the target node in the weighted graph
+	double PR_wg_bias_target_value[NUM_INTER], PR_wg_bias_constant[NUM_INTER];  // the PageRank force is calculated based on a harmonic bias on the PageRank value of the target node
+
+
 
   }; // this is the end of class 'ChemNetwork_Weighted_Graph'
 

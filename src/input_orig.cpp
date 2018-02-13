@@ -289,7 +289,7 @@ if(nsolutetype == 2)
 
   if(findf(fd, 2, "[WEIGHTED", "GRAPH]") != EOF){   // find this keyword, read the other informations
     if(fscanf(fd, "%d", &cnwg.index_weighted_graph) != 1){
-      printf("Cannot read the value YES(1) or NO(0) for WEIGHTED GRAPH keyword\n");
+      printf("Cannot read the value 1(yes) or 0(no) for [WEIGHTED GRAPH] keyword\n");
       exit(-1);
     }
     
@@ -304,7 +304,7 @@ if(nsolutetype == 2)
       }
 
       if(fscanf(fd, "%d", &cnwg.index_wg_st1_cluster) != 1){
-        printf("Cannot find the value of keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n");
+        printf("Cannot find the value of keyword [WEIGHTED GRAPH BY SOLUTE1 CLUSTER]\n   1(yes) 0(no) \n");
         exit(-1);
       }
 
@@ -358,7 +358,7 @@ if(nsolutetype == 2)
          }
 
         if(fscanf(fd, "%d", &cnwg.index_wg_st1_sv1) != 1){
-          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1]\n");
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1]\n   1(yes) or 0(no) \n");
           exit(-1);
         }
 
@@ -371,13 +371,18 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.num_wg_st1_sv1_dist) != 1){
-            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n");
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n   it should be a positive interger number\n");
+            exit(-1);
+          }
+
+          if(cnwg.num_wg_st1_sv1_dist >= NUM_INTER){
+            printf("Size overflow in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n default maximum %d \n", NUM_INTER);
             exit(-1);
           }
 
           for(i=0; i < cnwg.num_wg_st1_sv1_dist; i++){
             if(fscanf(fd, "%d %d", &cnwg.atom1_wg_st1_sv1[i], &cnwg.atom2_wg_st1_sv1[i]) != 2){
-              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n");
+              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE]\n   two atom-site-index (e.g. 1 2) \n");
               exit(-1);
             }
           }
@@ -395,13 +400,13 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.funct_type_wg_st1_sv1) != 1){
-            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n");
+            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n   it should be a positive integer number\n");
             exit(-1);
           }
 
           if(cnwg.funct_type_wg_st1_sv1 == 1){  // function-type = 1, which is 1.0 / (1.0 + exp(n0 * (r - r0)/r0)), there are two parameters
             if(fscanf(fd, "%lf %lf", &cnwg.funct_par1_wg_st1_sv1, &cnwg.funct_par2_wg_st1_sv1) != 2){
-              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n");
+              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT1 DISTANCE FUNCTION]\n  it should be two floating number\n");
               exit(-1);
             }
           }
@@ -426,7 +431,7 @@ if(nsolutetype == 2)
          }
 
         if(fscanf(fd, "%d", &cnwg.index_wg_st1_sv2) != 1){
-          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2]\n");
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2]\n   1(yes) or 0(no) \n");
           exit(-1);
         }
 
@@ -437,13 +442,18 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.num_wg_st1_sv2_dist) != 1){
-            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n");
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n   it should be a positive interger number\n");
+            exit(-1);
+          }
+
+          if(cnwg.num_wg_st1_sv2_dist >= NUM_INTER){
+            printf("Size overflow in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n  default maximum %d \n", NUM_INTER);
             exit(-1);
           }
 
           for(i=0; i < cnwg.num_wg_st1_sv2_dist; i++){
             if(fscanf(fd, "%d %d", &cnwg.atom1_wg_st1_sv2[i], &cnwg.atom2_wg_st1_sv2[i]) != 2){
-              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n");
+              printf("Cannot read the atom index in [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE]\n  two atom-site-index (e.g. 1 2 )\n");
               exit(-1);
             }
           }
@@ -461,13 +471,13 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.funct_type_wg_st1_sv2) != 1){
-            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n");
+            printf("Cannot read function-type in keyword [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n   it should be a positive integer number\n");
             exit(-1);
           }
 
           if(cnwg.funct_type_wg_st1_sv2 == 1){  // function-type = 1, which is 1.0 / (1.0 + exp(n0 * (r - r0)/r0)), there are two parameters
             if(fscanf(fd, "%lf %lf", &cnwg.funct_par1_wg_st1_sv2, &cnwg.funct_par2_wg_st1_sv2) != 2){
-              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n");
+              printf("Cannot read the parameters in function [WEIGHTED GRAPH EDGE SOLUTE1 SOLVENT2 DISTANCE FUNCTION]\n   it should be two floating-number \n");
               exit(-1);
             }
           }
@@ -492,7 +502,7 @@ if(nsolutetype == 2)
         }
 
         if(fscanf(fd, "%d", &cnwg.index_wg_sv1_sv1) != 1){
-          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1]\n");
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1]\n   1(yes) or 0(no) \n");
           exit(-1);
         }
 
@@ -505,13 +515,18 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.num_wg_sv1_sv1_dist) != 1){
-            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n");
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n  it should be a positive integer number \n");
+            exit(-1);
+          }
+
+          if(cnwg.num_wg_sv1_sv1_dist >= NUM_INTER){
+            printf("Size overflow in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n   default maximum %d \n", NUM_INTER);
             exit(-1);
           }
 
           for(i=0; i < cnwg.num_wg_sv1_sv1_dist; i++){
             if(fscanf(fd, "%d %d", &cnwg.atom1_wg_sv1_sv1[i], &cnwg.atom2_wg_sv1_sv1[i]) != 2){
-              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n");
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE]\n  two atom-site-index ( e.g. 1 2 ) \n");
               exit(-1);
             }
           }
@@ -524,13 +539,13 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.funct_type_wg_sv1_sv1) != 1){
-            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n");
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n  it should be a positive integer number \n");
             exit(-1);
           }
 
           if(cnwg.funct_type_wg_sv1_sv1 == 1) {
             if(fscanf(fd, "%lf %lf", &cnwg.funct_par1_wg_sv1_sv1, &cnwg.funct_par2_wg_sv1_sv1) != 2){
-              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n");
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT1 DISTANCE FUNCTION]\n  it should be two floating-number \n");
               exit(-1);
             }
           }
@@ -555,7 +570,7 @@ if(nsolutetype == 2)
         }
 
         if(fscanf(fd, "%d", &cnwg.index_wg_sv2_sv2) != 1){
-          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2]\n");
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2]\n   1(yes) or 2(no)\n");
           exit(-1);
         }
 
@@ -568,13 +583,18 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.num_wg_sv2_sv2_dist) != 1){
-            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n");
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n   it should be a positive integer number \n");
+            exit(-1);
+          }
+
+          if(cnwg.num_wg_sv2_sv2_dist >= NUM_INTER){
+            printf("Size overflow in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n default maximum %d \n", NUM_INTER);
             exit(-1);
           }
 
           for(i=0; i < cnwg.num_wg_sv2_sv2_dist; i++){
             if(fscanf(fd, "%d %d", &cnwg.atom1_wg_sv2_sv2[i], &cnwg.atom2_wg_sv2_sv2[i]) != 2){
-              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n");
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE]\n   two atom-site-index (e.g. 1 2 ) \n");
               exit(-1);
             }
           }
@@ -587,13 +607,13 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.funct_type_wg_sv2_sv2) != 1){
-            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n");
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n  it should be a positive integer number\n");
             exit(-1);
           }
 
           if(cnwg.funct_type_wg_sv2_sv2 == 1) {
             if(fscanf(fd, "%lf %lf", &cnwg.funct_par1_wg_sv2_sv2, &cnwg.funct_par2_wg_sv2_sv2) != 2){
-              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n");
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT2 SOLVENT2 DISTANCE FUNCTION]\n  it should be two floating-number \n");
               exit(-1);
             }
           }
@@ -618,7 +638,7 @@ if(nsolutetype == 2)
         }
 
         if(fscanf(fd, "%d", &cnwg.index_wg_sv1_sv2) != 1){
-          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2]\n");
+          printf("Cannot read the value of keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2]\n   1(yes) or 0(no) \n ");
           exit(-1);
         }
 
@@ -631,13 +651,18 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.num_wg_sv1_sv2_dist) != 1){
-            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n");
+            printf("Cannot read value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n  it should be a positive integer number\n");
+            exit(-1);
+          }
+
+          if(cnwg.num_wg_sv1_sv2_dist >= NUM_INTER){
+            printf("Size overflow in keyword [WEIGHTDE GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n detault maximum %d \n", NUM_INTER);
             exit(-1);
           }
 
           for(i=0; i < cnwg.num_wg_sv1_sv2_dist; i++){
             if(fscanf(fd, "%d %d", &cnwg.atom1_wg_sv1_sv2[i], &cnwg.atom2_wg_sv1_sv2[i]) != 2){
-              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n");
+              printf("Cannot read atom index in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE]\n   two atom-site-index (e.g. 1 2 ) \n");
               exit(-1);
             }
           }
@@ -650,13 +675,13 @@ if(nsolutetype == 2)
           }
 
           if(fscanf(fd, "%d", &cnwg.funct_type_wg_sv1_sv2) != 1){
-            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n");
+            printf("Cannot read the value in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n   it should be a positive integer number \n");
             exit(-1);
           }
 
           if(cnwg.funct_type_wg_sv1_sv2 == 1) {
             if(fscanf(fd, "%lf %lf", &cnwg.funct_par1_wg_sv1_sv2, &cnwg.funct_par2_wg_sv1_sv2) != 2){
-              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n");
+              printf("Cannot read the parameters in keyword [WEIGHTED GRAPH EDGE SOLVENT1 SOLVENT2 DISTANCE FUNCTION]\n   it should be two floating-number \n");
               exit(-1);
             }
           }
@@ -675,6 +700,72 @@ if(nsolutetype == 2)
     } // this is the end of ' if(cnwg.index_weighted_graph == 1) ' 
 
     rewind(fd);
+
+    /* read the keyword for pagerank calculation */
+    if(findf(fd, 4, "[PAGERANK", "ON", "WEIGHTED", "GRAPH]") == EOF){
+      printf("Cannot find keyword [PAGERANK ON WEIGHTED GRAPH]\n");
+      exit(-1);
+    }
+
+    if(fscanf(fd, "%d", &cnwg.index_PR_wg) != 1){
+      printf("Cannot read the value of keyword [PAGERANK ON WEIGHTED GRAPH]\n   1(yes) or 0(no) \n");
+      exit(-1);
+    }
+
+    rewind(fd);
+
+    if(cnwg.index_PR_wg == 1){
+
+      if(findf(fd, 3, "[PAGERANK", "DAMPING", "FACTOR]") == EOF){
+        printf("Cannot find keyword [PAGERANK DAMPING FACTOR]\n");
+        exit(-1);
+      }
+
+      if(fscanf(fd, "%lf", &cnwg.PR_damping_factor) != 1){
+        printf("Cannot read the value of keyword [PAGERANK ON WEIGHTED GRAPH]\n 0.0 < d < 1.0 \n");
+        exit(-1);
+      }
+
+      rewind(fd);
+
+      if(findf(fd, 3, "[PAGERANK", "FORCE", "CALCULATION]") == EOF){
+        printf("Cannot find keyword [PAGERANK FORCE CALCULATION]\n");
+        exit(-1);
+      }
+
+      if(fscanf(fd, "%d", &cnwg.index_PR_wg_force) != 1){
+        printf("Cannot read the value of keyword [PAGERANK FORCE CALCULATION]\n  1(yes) or 0(no)\n");
+        exit(-1);
+      }
+
+      rewind(fd);
+
+      if(cnwg.index_PR_wg_force == 1){
+        if(findf(fd, 4, "[PAGERANK", "FORCE", "CALCULATION", "BIAS]") == EOF){
+          printf("Cannot find keyword [PAGERANK FORCE CALCULATION BIAS]\n");
+          exit(-1);
+        }
+
+        if(fscanf(fd, "%d", &cnwg.num_PR_wg_force_bias) != 1){
+          printf("Cannot read the value of keyword [PAGERANK FORCE CALCULATION BIAS]\n  it should be a positive integer number\n");
+          exit(-1);
+        }
+
+        if(cnwg.num_PR_wg_force_bias > NUM_INTER){
+          printf("Size-overflow, in keyword [PAGERANK FORCE CALCULATION BIAS]\n  default maximum NUM_INTER = %d\n", NUM_INTER);
+          exit(-1);
+        }
+
+        for(i=0; i < cnwg.num_PR_wg_force_bias; i++){
+          if(fscanf(fd, "%d %lf %lf", &cnwg.PR_wg_bias_target_id[i], &cnwg.PR_wg_bias_target_value[i], &cnwg.PR_wg_bias_constant[i]) != 3){
+            printf("Cannot read the parameters in keyword [PAGERANK FORCE CALCULATION BIAS]\n  target-id  target-PR-value  bias-constant\n");
+            exit(-1);
+          }
+        }
+      }
+
+
+    }  // this is the end of ' if(cnwg.index_PR_wg == 1) '
 
   }  // this is the end of ' if(findf(fd, 2, "[WEIGHTED", "GRAPH]") != EOF) '
 
