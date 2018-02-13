@@ -340,6 +340,14 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
 
 
 
+int ChemNetworkOrig::ChemNetwork_Weighted_Graph::calculate_PR_from_cluster_Adj(FILE *output_PR_on_weighted_graph, int total_num_nodes, double **WG_Adj, struct Mol_identity *WG_Mol_id)
+{
+
+  fprintf(output_PR_on_weighted_graph,"%d\n",total_num_nodes);
+  return(0);
+};
+
+
 
 
 double ChemNetworkOrig::ChemNetwork_Weighted_Graph::wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside)

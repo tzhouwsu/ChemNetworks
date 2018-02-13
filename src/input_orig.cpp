@@ -2728,6 +2728,9 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
   sprintf(cnwg.foutput_weighted_graph, "Weighted.Graph.%s",argv[1]);
   cnwg.output_weighted_graph = fopen(cnwg.foutput_weighted_graph,"w");
 
+  sprintf(cnwg.foutput_PR_on_weighted_graph, "PageRank.%s",argv[1]);
+  cnwg.output_PR_on_weighted_graph = fopen(cnwg.foutput_PR_on_weighted_graph,"w");
+
   /* select the molecules/atoms within the cluster calculation */
   if(cnwg.index_wg_st1_cluster >= 1)
   {
@@ -2901,14 +2904,19 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
                               cnwg.index_wg_sv1_sv2, cnwg.num_wg_sv1_sv2_dist, cnwg.atom1_wg_sv1_sv2, cnwg.atom2_wg_sv1_sv2, cnwg.funct_type_wg_sv1_sv2, cnwg.funct_par1_wg_sv1_sv2, cnwg.funct_par2_wg_sv1_sv2,
                               xside, yside, zside);
 
-    
-    
+
+    /* perform pagerank calculation on the weighted graph*/
+    cnwg.index_cal_PR = cnwg.calculate_PR_from_cluster_Adj(cnwg.output_PR_on_weighted_graph, cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2, cnwg.WG_Adj, cnwg.WG_Mol_id);
+
+ 
   } // this is the end of ' if(index_wg_st1_cluster == 1) '
 
  
   fclose(cnwg.output_weighted_graph);
+  fclose(cnwg.output_PR_on_weighted_graph);
 
-}
+
+} // this is the end of ' if(cnwg.index_weighted_graph == 1) ', for weighted-graph
 
 
 
