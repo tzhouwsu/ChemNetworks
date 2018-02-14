@@ -2887,12 +2887,19 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
      } // this is the end of ' if(nsolventtype >= 2 && cnwg.index_wg_st1_sv2 == 1 && cnwg.findsolvent(2, cnwg.index_wg_st1_cluster, cnwg.cluster_st1_sv_type) == 1) 
 
 
-    /* allocate the Adjacency matrix for weighted graph */
+    /* allocate the memory for weighted graph */
     cnwg.total_num_nodes = cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2;
-    cnwg.WG_Adj = (double **)malloc( cnwg.total_num_nodes * sizeof(double *) ); 
+    cnwg.WG_Adj = (double **)malloc( cnwg.total_num_nodes * sizeof(double *) );  // the Adjacency matrix for weighted graph
+    cnwg.PR_Smatrix = (double **)malloc( cnwg.total_num_nodes * sizeof(double *) );  // the stachastic matrix S, column-normalized from Adj
+    cnwg.PR_inverse_IdS = (double **)malloc( cnwg.total_num_nodes * sizeof(double *) );  // this is the (I - d * S)^-1, which is an inverse matrix, for PageRank calculation & PageRank force calculation
     for(i=0; i< cnwg.total_num_nodes; i++) {
       cnwg.WG_Adj[i] = (double *)calloc( cnwg.total_num_nodes, sizeof(double) );
+      cnwg.PR_Smatrix[i] = (double *)calloc( cnwg.total_num_nodes, sizeof(double) );
+      cnwg.PR_inverse_IdS[i] = (double *)calloc( cnwg.total_num_nodes, sizeof(double) );
     }
+
+    cnwg.PR_vector = (double *)malloc(cnwg.total_num_nodes * sizeof(double));  // the PageRank vector for weighted graph
+
 
     /* create the weighted graph, based on the selected cluster from solute1, solvent1, solvent2 coordinates */
     cnwg.index_create_Adj = cnwg.create_WG_Adj_from_cluster(cnwg.output_weighted_graph, cnwg.WG_Adj, cnwg.WG_Mol_id, 
@@ -2904,10 +2911,23 @@ if(cnwg.index_weighted_graph == 1)   // when the weighted graph is requested
                               cnwg.index_wg_sv1_sv2, cnwg.num_wg_sv1_sv2_dist, cnwg.atom1_wg_sv1_sv2, cnwg.atom2_wg_sv1_sv2, cnwg.funct_type_wg_sv1_sv2, cnwg.funct_par1_wg_sv1_sv2, cnwg.funct_par2_wg_sv1_sv2,
                               xside, yside, zside);
 
+    if(cnwg.index_create_Adj != 0){
+      printf("Error in function 'create_WG_Adj_from_cluster' for creating Adjacency matrix of weighted graph\n");
+    }
 
     /* perform pagerank calculation on the weighted graph*/
-    cnwg.index_cal_PR = cnwg.calculate_PR_from_cluster_Adj(cnwg.output_PR_on_weighted_graph, cnwg.num_mol_cluster_st1 + cnwg.num_mol_cluster_sv1 + cnwg.num_mol_cluster_sv2, cnwg.WG_Adj, cnwg.WG_Mol_id);
+    if(cnwg.index_PR_wg == 1)
+    {
+      cnwg.index_cal_PR = cnwg.calculate_PR_from_cluster_Adj(cnwg.output_PR_on_weighted_graph, cnwg.PR_vector, cnwg.total_num_nodes, 
+                                                             cnwg.WG_Adj, cnwg.PR_Smatrix, cnwg.PR_inverse_IdS, cnwg.WG_Mol_id, cnwg.PR_damping_factor);
 
+      if(cnwg.index_cal_PR != 0){
+        printf("Error in function 'calculate_PR_from_cluster_Adj' for pagerank calculation on weighted graph\n");
+        exit(-1);
+      }
+
+      
+    }
  
   } // this is the end of ' if(index_wg_st1_cluster == 1) '
 

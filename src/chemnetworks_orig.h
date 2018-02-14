@@ -554,11 +554,16 @@ namespace CN_NS {
 	int PR_wg_bias_target_id[NUM_INTER];   // this is to record the id of the target node in the weighted graph
 	double PR_wg_bias_target_value[NUM_INTER], PR_wg_bias_constant[NUM_INTER];  // the PageRank force is calculated based on a harmonic bias on the PageRank value of the target node
 	int index_cal_PR;
+	double *PR_vector;
+	double **PR_Smatrix, **PR_inverse_IdS;
 
 	char foutput_PR_on_weighted_graph[FLN];
 	FILE *output_PR_on_weighted_graph;
 
-	int calculate_PR_from_cluster_Adj(FILE *output_PR_on_weighted_graph, int total_num_nodes, double **WG_Adj, struct Mol_identity *WG_Mol_id);
+	int calculate_PR_from_cluster_Adj(FILE *output_PR_on_weighted_graph, double *PR_vector, int total_num_nodes, double **WG_Adj, double **PR_Smatrix, double **PR_inverse_IdS, struct Mol_identity *WG_Mol_id, double damping_factor);
+
+	int get_inverse(int size_of_matrix, double **Inverse_Matrix, double **Matrix);
+
 
   }; // this is the end of class 'ChemNetwork_Weighted_Graph'
 

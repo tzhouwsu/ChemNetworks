@@ -339,15 +339,172 @@ int ChemNetworkOrig::ChemNetwork_Weighted_Graph::create_WG_Adj_from_cluster(FILE
 };
 
 
-
-int ChemNetworkOrig::ChemNetwork_Weighted_Graph::calculate_PR_from_cluster_Adj(FILE *output_PR_on_weighted_graph, int total_num_nodes, double **WG_Adj, struct Mol_identity *WG_Mol_id)
+/* PageRank calculation based on an Adjacency matrix for weighted graph */
+int ChemNetworkOrig::ChemNetwork_Weighted_Graph::calculate_PR_from_cluster_Adj(FILE *output_PR_on_weighted_graph, double *PR_vector, int total_num_nodes, double **WG_Adj, double **PR_Smatrix, double **PR_inverse_IdS, struct Mol_identity *WG_Mol_id, double damping_factor)
 {
+  int pi,pj;
+  double *W_column, *PR_initial;
+  double **I_dS;
+  int tag;
 
-  fprintf(output_PR_on_weighted_graph,"%d\n",total_num_nodes);
+  PR_initial = (double *)malloc(total_num_nodes * sizeof(double));
+  for(pi=0; pi < total_num_nodes; pi++){
+    PR_initial[pi] = 1.0 / total_num_nodes;
+  }
+
+  W_column = (double *)malloc(total_num_nodes * sizeof(double));
+  for(pj=0; pj < total_num_nodes; pj++){
+    W_column[pj] = 0.0;
+    for(pi=0; pi < total_num_nodes; pi++)
+      W_column[pj] += WG_Adj[pi][pj];
+  }
+
+  for(pi=0; pi < total_num_nodes; pi++){
+    for(pj=0; pj < total_num_nodes; pj++){
+      if(W_column[pj] == 0.0)
+        PR_Smatrix[pi][pj] = 1.0 / total_num_nodes;
+      else
+        PR_Smatrix[pi][pj] = WG_Adj[pi][pj] / W_column[pj];
+    }
+  }
+
+  I_dS = (double **)malloc(total_num_nodes * sizeof(double));
+  for(pi=0; pi < total_num_nodes; pi++)
+    I_dS[pi] = (double *)calloc(total_num_nodes, sizeof(double));
+
+  for(pi=0; pi < total_num_nodes; pi++){
+    for(pj=0; pj < total_num_nodes; pj++){
+      if(pj == pi)
+        I_dS[pi][pj] = 1.0 - damping_factor * PR_Smatrix[pi][pj];
+      else
+        I_dS[pi][pj] = 0.0 - damping_factor * PR_Smatrix[pi][pj];
+    }
+  }
+
+  printf("%f\n",damping_factor);
+
+  tag = get_inverse(total_num_nodes, PR_inverse_IdS, I_dS);  /* get the inverse of a matrix using Gauss-Jordan method */
+  if(tag != 0){
+    printf("Error: cannot get the matrix inverse\n");
+    return(-1);
+  }
+
+  for(pi=0; pi < total_num_nodes; pi++)
+  {
+    for(pj=0; pj < total_num_nodes; pj++)
+      printf("%e ",PR_inverse_IdS[pi][pj]);
+    printf("\n");
+  }
+
+  for(pi=0; pi < total_num_nodes; pi++){
+    PR_vector[pi] = 0.0;
+    for(pj=0; pj < total_num_nodes; pj++)
+      PR_vector[pi] += PR_inverse_IdS[pi][pj] * (1.0 - damping_factor) * PR_initial[pj];
+  }
+    
+  /* print the PageRank vector into the output file */
+  for(pi=0; pi < total_num_nodes; pi++){
+    if(WG_Mol_id[pi].solute_type != 0)
+      fprintf(output_PR_on_weighted_graph, "%d ( st%d ) pagerank: %e \n", pi, WG_Mol_id[pi].id, PR_vector[pi]);
+    else
+      fprintf(output_PR_on_weighted_graph, "%d ( sv%d ) pagerank: %e \n", pi, WG_Mol_id[pi].id, PR_vector[pi]);
+  }
+
   return(0);
 };
 
 
+/* get the inverse of a matrix using Gauss-Jordan method, in which GJ_matrix ( Matrix | I ) is reduced to ( I | Inverse_Matrix ) using row operations */
+int ChemNetworkOrig::ChemNetwork_Weighted_Graph::get_inverse(int size_of_matrix, double **Inverse_Matrix, double **Matrix)
+{
+  int ii, jj, kk;
+  double **GJ_matrix, temp;
+  int result=0;
+
+  GJ_matrix = (double **)malloc( size_of_matrix * sizeof(double *) );
+  for(ii=0; ii < size_of_matrix; ii++)
+    GJ_matrix[ii] = (double *)calloc( size_of_matrix * 2, sizeof(double) );
+
+  for(ii=0; ii < size_of_matrix; ii++){
+    for(jj=0; jj < size_of_matrix * 2; jj++){
+      if(jj < size_of_matrix)
+        GJ_matrix[ii][jj] = Matrix[ii][jj];
+      else{
+        if(jj == ii + size_of_matrix)
+          GJ_matrix[ii][jj] = 1.0;
+        else
+          GJ_matrix[ii][jj] = 0.0;   
+      }
+    }
+  }
+
+  for(ii=0; ii < size_of_matrix; ii++)
+  {
+    for(jj=0; jj < size_of_matrix * 2; jj++)
+      printf("%e ", GJ_matrix[ii][jj]);
+    printf("\n");
+  }
+
+  for(ii=0; ii < size_of_matrix; ii++)
+  {
+    if(GJ_matrix[ii][ii] == 0.0) // if this row, ii, starts with 0, find another row_j, and swap it with another row
+    {
+      for(jj=ii+1; jj < size_of_matrix; jj++)
+        if(GJ_matrix[jj][ii] != 0.0)
+          break;
+
+      if(jj >= size_of_matrix)
+      {
+        printf("  Error: matrix is not invertible %d\n",ii);
+        result = -1;
+        break;
+      }
+      else
+      {
+         for(kk=0; kk < size_of_matrix * 2; kk++)
+         {
+           temp = GJ_matrix[ii][kk];
+           GJ_matrix[ii][kk] = GJ_matrix[jj][kk];
+           GJ_matrix[jj][kk] = temp;
+         }
+      }
+
+    }   // after this if statement, the first element in row ii is non-zero
+
+    temp = GJ_matrix[ii][ii];
+    for(kk=0; kk < size_of_matrix * 2; kk++)
+      GJ_matrix[ii][kk] = GJ_matrix[ii][kk] / temp;
+
+    for(jj=0; jj < size_of_matrix; jj++)
+    {
+      if(jj != ii)
+      {
+        temp = GJ_matrix[jj][ii];
+        for(kk=0; kk < size_of_matrix * 2; kk++)
+          GJ_matrix[jj][kk] = GJ_matrix[jj][kk] - GJ_matrix[ii][kk] * temp;
+      }
+    }
+
+  }  // this is the end of ' for(ii=0; ii < size_of_matrix; ii++) ', so that GJ_matrix is now ( I | Inverse_Matrix )
+
+  for(ii=0; ii < size_of_matrix; ii++)
+  {
+    for(jj=0; jj < size_of_matrix * 2; jj++)
+      printf("%e ", GJ_matrix[ii][jj]);
+    printf("\n");
+  }
+
+
+  for(ii=0; ii < size_of_matrix; ii++)
+    for(jj=0; jj < size_of_matrix; jj++)
+      Inverse_Matrix[ii][jj] = GJ_matrix[ii][jj + size_of_matrix];
+
+  for(ii=0; ii < size_of_matrix; ii++)
+    free(GJ_matrix[ii]);
+  free(GJ_matrix);
+
+  return(result);
+};
 
 
 double ChemNetworkOrig::ChemNetwork_Weighted_Graph::wg_site_distance(double *atomM1, int idmolM1, int natmM1, int idatmM1, double *atomM2, int idmolM2, int natmM2, int idatmM2, double xside, double yside, double zside)
